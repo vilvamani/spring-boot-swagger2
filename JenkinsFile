@@ -56,7 +56,7 @@ def deployOpenShift(registryID, imageName, version, buildNo, namespace){
 	sh "oc import-image ${imageName}:${version}.${buildNo} --insecure -n ${namespace} || true"
 	
 	try {
-		output = sh(script: "oc new-app --name ${imageName}-${version} --image-stream=piab-poc/${imageName}:${version}.${buildNo} -n ${namespace}", returnStdout: true)
+		output = sh(script: "oc new-app --name ${imageName}-${version} --image-stream=${imageName}/${imageName}:${version}.${buildNo} -n ${namespace}", returnStdout: true)
 		println output
 		
 		output = sh(script: "oc expose service/${imageName}-${version} --path=/wso2apim-demo --hostname=${imageName}-${version}-test.magellancloud.com -n ${namespace}", returnStdout: true)

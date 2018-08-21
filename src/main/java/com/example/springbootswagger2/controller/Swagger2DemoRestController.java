@@ -52,6 +52,7 @@ public class Swagger2DemoRestController {
 		List<Student> studentsByCountry = students.stream().filter(x -> x.getCountry().equalsIgnoreCase(country))
 				.collect(Collectors.toList());
 		System.out.println(studentsByCountry);
+		System.out.println(studentsByCountry);
 		return studentsByCountry;
 	}
 

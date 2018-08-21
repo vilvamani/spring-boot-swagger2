@@ -1,0 +1,68 @@
+node {
+	stage('SourceCodeMgmt') {
+		git changelog: false, poll: false, url: 'https://github.com/vilvamani/spring-boot-swagger2.git'
+	}
+	
+	stage('Build and Package') {
+	    build("maven 3.5.4", "package");
+	}
+	
+	stage('SonarQube analysis') {
+		checkCodeQuality("SonarQube");
+    }
+
+	stage('Docker Build and Publish') {
+		buildAndPush('vilvamani007', 'piab-poc', 'v1');
+    }
+	
+    stage('Deploy to OpenShift') {
+		deployOpenShift('vilvamani007', 'piab-poc', 'v1', "${env.BUILD_NUMBER}", 'piab-poc');
+    }
+}
+
+def build(mvnVersion, task){
+	def mvnHome = tool name: "${mvnVersion}"
+	env.PATH = "${mvnHome}/bin:${env.PATH}"
+    sh "mvn clean ${task}"
+}
+
+def checkCodeQuality(sonarVersion){
+	withSonarQubeEnv("${sonarVersion}") { // SonarQube taskId is automatically attached to the pipeline context
+        sh "mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.3.0.603:sonar" 
+    }
+}
+
+def buildAndPush(registryID, imageName, version){
+    def app
+    try {
+	    app = docker.build("${registryID}/${imageName}")
+		docker.withRegistry('https://registry.hub.docker.com', 'docker-credentials') {
+		    app.push("${version}.${env.BUILD_NUMBER}")
+		}
+	} catch (error){
+		sh 'echo "Not able to build and push docker image ${error}"'
+	}
+}
+
+def deployOpenShift(registryID, imageName, version, buildNo, namespace){
+
+	env.PATH = "/var/lib/jenkins/tools/:${env.PATH}"
+
+    sh "oc login $URL_OS_TEST --token=$TOKEN_OS_TEST --insecure-skip-tls-verify"
+	
+	output = sh(script: "oc tag --source=docker ${registryID}/${imageName}:${version}.${buildNo} ${imageName}:${version}.${buildNo} -n ${namespace}", returnStdout: true)
+	println output
+	
+	sh "oc import-image ${imageName}:${version}.${buildNo} --insecure -n ${namespace} || true"
+	
+	try {
+		output = sh(script: "oc new-app --name ${imageName}-${version} --image-stream=piab-poc/${imageName}:${version}.${buildNo} -n ${namespace}", returnStdout: true)
+		println output
+		
+		output = sh(script: "oc expose service/${imageName}-${version} --path=/wso2apim-demo --hostname=${imageName}-${version}-test.magellancloud.com -n ${namespace}", returnStdout: true)
+		println output
+	} catch (error){
+		output = sh(script: "oc deploy ${imageName}-${version} --latest -n ${namespace} || true", returnStdout: true)
+		println output
+	}
+}

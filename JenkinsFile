@@ -12,11 +12,11 @@ node {
     }
 
 	stage('Docker Build and Publish') {
-		buildAndPush('vilvamani007', 'piab-poc', 'v1');
+		buildAndPush('vilvamani007', "${env.JOB_NAME}", 'v1');
     }
 	
     stage('Deploy to OpenShift') {
-		deployOpenShift('vilvamani007', 'piab-poc', 'v1', "${env.BUILD_NUMBER}", 'piab-poc');
+		deployOpenShift('vilvamani007', "${env.JOB_NAME}", 'v1', "${env.BUILD_NUMBER}", "${env.JOB_NAME}");
     }
 }
 

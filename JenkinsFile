@@ -16,7 +16,7 @@ node {
     }
 	
     stage('Deploy to OpenShift') {
-		deployOpenShift('vilvamani007', "${env.JOB_NAME}", 'v1', "${env.BUILD_NUMBER}", "${env.JOB_NAME}");
+		deployOpenShift('vilvamani007', "${env.JOB_NAME}", 'v1', "${env.BUILD_NUMBER}", "piab-demo");
     }
 }
 
@@ -56,7 +56,7 @@ def deployOpenShift(registryID, imageName, version, buildNo, namespace){
 	sh "oc import-image ${imageName}:${version}.${buildNo} --insecure -n ${namespace} || true"
 	
 	try {
-		output = sh(script: "oc new-app --name ${imageName}-${version} --image-stream=${imageName}/${imageName}:${version}.${buildNo} -n ${namespace}", returnStdout: true)
+		output = sh(script: "oc new-app --name ${imageName}-${version} --image-stream=${namespace}/${imageName}:${version}.${buildNo} -n ${namespace}", returnStdout: true)
 		println output
 		
 		output = sh(script: "oc expose service/${imageName}-${version} --path=/wso2apim-demo --hostname=${imageName}-${version}-test.magellancloud.com -n ${namespace}", returnStdout: true)

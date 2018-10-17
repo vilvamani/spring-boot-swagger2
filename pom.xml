@@ -5,7 +5,7 @@
 
 	<groupId>com.example</groupId>
 	<artifactId>spring-boot-swagger2</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>${releaseVersion}-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>spring-boot-swagger2</name>

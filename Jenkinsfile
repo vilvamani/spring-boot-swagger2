@@ -1,3 +1,3 @@
 #!groovy
-@Library('javaMvn@feature/develop-1.0') _
-javaMvn{}
+@Library('sharedlibrary') _
+sharedlibrary{}

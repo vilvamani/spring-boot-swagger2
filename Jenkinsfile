@@ -1,3 +1,3 @@
 #!groovy
-@Library('sharedlibrary') _
-sharedlibrary{}
+@Library('sharedlibrary@master') _
+sample{}

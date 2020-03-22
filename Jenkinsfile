@@ -13,6 +13,14 @@ node('laptop') {
   sh 'mvn clean install'
  }
 
+ stage('Code Quality') {
+  def scannerHome = tool 'sonarScanner'
+  withSonarQubeEnv("SonarQube") {
+   //sh "${scannerHome}/bin/sonar-scanner"
+   sh 'mvn sonar:sonar'
+  }
+ }
+
  stage('DockerBuild') {
   // This step should not normally be used in your script. Consult the inline help for details.
 

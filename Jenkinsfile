@@ -9,8 +9,12 @@ node('laptop') {
   git 'https://github.com/vilvamani/spring-boot-swagger2'
  }
 
+ stage('UnitTest') {
+  sh 'mvn clean test -U'
+ }
+
  stage('Build') {
-  sh 'mvn clean install'
+  sh 'mvn clean install -DskipTests'
  }
 
  stage('Code Quality') {

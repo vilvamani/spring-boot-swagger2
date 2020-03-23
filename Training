@@ -1,0 +1,5 @@
+Day 1:
+1. Create Jenkins as Docker Services
+2. Create Jenkins Slave/Node and Connect with Master
+3. Create freestyle job and print environment variables.
+    - https://wiki.jenkins.io/display/JENKINS/Building+a+software+project

@@ -6,3 +6,44 @@
   - Maven Build
   - Docker Build
 4. Execute your pipeline job in both Master and Slave
+5. Play with Dir() function.
+
+Example: 
+node('laptop') {
+
+ def mvnHome = tool 'm2repo'
+ env.PATH = "${mvnHome}/bin:${env.PATH}"
+
+
+ dir('MainDir') {
+
+  stage('Workspace CleanUp') {
+   cleanWs()
+  }
+
+  stage('GIT Checkout') {
+
+   dir('SpringBoot') {
+    git(branch: 'master',
+     url: 'https://github.com/vilvamani/spring-boot-swagger2.git')
+   }
+
+   dir('SpringBoot1') {
+    git(branch: 'master',
+     url: 'https://github.com/vilvamani/spring-boot-swagger2.git')
+   }
+
+  }
+
+  stage('Maven Build') {
+   dir('SpringBoot') {
+    sh 'mvn clean install'
+   }
+
+  }
+
+  stage('Docker Build') {
+   sh "docker build -t testdocker:$BUILD_NUMBER"
+  }
+ }
+}

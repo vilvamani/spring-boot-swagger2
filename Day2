@@ -1,0 +1,8 @@
+1. Create Pipeline job
+2. Install Maven in the Global tools configurtion
+3. Create simple Jenkinsfile with following stages
+  - Workspace CleanUp
+  - Git Checkout
+  - Maven Build
+  - Docker Build
+4. Execute your pipeline job in both Master and Slave

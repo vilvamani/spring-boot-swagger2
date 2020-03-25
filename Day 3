@@ -1,6 +1,6 @@
 Jenkins Pipeline
-1. Parameter
-3. Read YAML, JSON and Property files (Plugin: Pipeline Utility Steps)
+1. Parameter (Freestyle and Pipeline)
+2. Read YAML, JSON and Property files (Plugin: Pipeline Utility Steps)
     - YAML
     - JSON
     - File/PropertyFile
@@ -8,18 +8,10 @@ Jenkins Pipeline
     - Manifest
     - Pom
 
-4. Sleep in Groovy Vs Shell Vs Bat
-5. Shell if else
-Syntax:
-    if [ expression ]
-    then
-    statement1
-    else
-    statement2
-    fi
+3. Sleep in Groovy Vs Shell Vs Bat
 
 
-Example:
+Jenkinsfile Code:
 
 node('laptop') {
 

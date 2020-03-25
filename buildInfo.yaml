@@ -1,7 +1,8 @@
-dev:
-  imageName: devspintboot
-  tag: dev1
-  
-qa:
-  imageName: qaspintboot
-  tag: qa1
+docker:
+  dev:
+    imageName: devspintboot
+    tag: dev1
+
+  qa:
+    imageName: qaspintboot
+    tag: qa1

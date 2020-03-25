@@ -4,4 +4,4 @@ dev:
   
 qa:
   imageName: qaspintboot
-  tag: dev1
+  tag: qa1

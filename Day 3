@@ -1,0 +1,64 @@
+Jenkins Pipeline
+1. Parameter
+3. Read YAML, JSON and Property files (Plugin: Pipeline Utility Steps)
+    - YAML
+    - JSON
+    - File/PropertyFile
+    - CSV
+    - Manifest
+    - Pom
+
+4. Sleep in Groovy Vs Shell Vs Bat
+5. Shell if else
+Syntax:
+    if [ expression ]
+    then
+    statement1
+    else
+    statement2
+    fi
+
+
+Example:
+
+node('laptop') {
+
+cleanWs()
+
+ def mvnHome = tool 'M3'
+ env.PATH = "${mvnHome}/bin:${env.PATH}"
+
+ stage('SCM') {
+  git(branch: 'master',
+     url: "https://github.com/vilvamani/${GitRepoName}.git"
+     )
+   }
+
+ def props = readProperties file: 'buildInfo.properties'
+ //imageName = "vilvamani007/${props['imageName']}:${env.BUILD_NUMBER}"
+
+ dockerImageName = props['imageName']
+ //imageName = "vilvamani007/${dockerImageName}:${env.BUILD_NUMBER}"
+
+
+ def yaml = readYaml file: 'buildInfo.yaml'
+
+ dockerimageName = yaml.docker[params.env]['imageName']
+ dockerimageTag = yaml.docker[params.env]['tag']
+ 
+ imageName = "vilvamani007/${dockerimageName}:${dockerimageTag}"
+
+ stage('UnitTest') {
+  sh 'mvn clean test -U'
+ }
+
+ stage('Build') {
+  sh 'mvn clean install -DskipTests'
+ }
+ 
+ stage('DockerBuild') {
+  // This step should not normally be used in your script. Consult the inline help for details.
+
+  customImage = docker.build(imageName)
+ }
+}

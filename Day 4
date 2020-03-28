@@ -1,0 +1,157 @@
+Day 4
+
+Assignment:
+
+1. Define simple Variables in groovy and use it in println
+2. Use simple if...else if.. else statement in groovy
+3. Define Variables for docker build
+4. Define variabel for Satge skip
+
+
+1. Usage of Variables in Goovy
+    Syntax:
+        def variable_name = value
+        (or)
+        variable_name = value
+
+    Example:
+        def AWS_ACCOUNT_ID = "123456789012"
+        (or)
+        AWS_ACCOUNT_ID = "123456789012"
+
+2. Groovy If..Else.. If statement
+
+Example: 1
+    if(condition) { 
+    statement #1 
+    statement #2 
+    ... 
+    } else{ 
+    statement #3 
+    statement #4  
+    }
+
+Example: 2
+    if(condition) { 
+    statement #1 
+    statement #2 
+    ... 
+    } else if(condition) { 
+    statement #3 
+    statement #4 
+    } else { 
+    statement #5 
+    statement #6 
+    }
+
+3. Groovy Function
+
+def Function_name() {
+}
+
+
+Example 1:
+node('laptop') {
+
+ git_repo = 'spring-boot-swagger2'
+ service = 'student-microsrvice'
+
+ docker_skip = true
+ unittest_skip = true
+
+ cleanWs() //Clean the existing workspace
+
+ stage("Git Checkout") {
+  gitCheckOut()
+ }
+
+ stage("UnitTest") {
+  unittest(unittest_skip)
+ }
+
+ stage("Maven Buils") {
+  build()
+ }
+
+ stage("Docker Buils") {
+  dockerBuild()
+ }
+}
+
+def gitCheckOut() {
+ git "https://github.com/vilvamani/${git_repo}.git"
+}
+
+def unittest(boolean skip = false) {
+ if (skip == true) {
+  println "Unit test case skipped"
+ } else {
+  sh "mvn clean test -U"
+ }
+}
+
+def build() {
+ sh "mvn install"
+}
+
+def dockerBuild(boolean skip = false) {
+ if (skip == true) {
+  println "Docker Build skipped"
+ } else {
+  sh "docker build -t ${service} ."
+ }
+}
+
+----------------
+Example 2: //Read inputs form parameter job
+
+node('laptop') {
+
+ git_repo = 'spring-boot-swagger2'
+ service = 'student-microsrvice'
+ unittest_skip = true
+
+ cleanWs() //Clean the existing workspace
+
+ stage("Git Checkout") {
+  gitCheckOut()
+ }
+
+ stage("UnitTest") {
+  unittest(unittest_skip)
+ }
+
+ stage("Maven Buils") {
+  build()
+ }
+
+ stage("Docker Buils") {
+  dockerBuild(params.docker_skip) // Reading the docker_skip input from the parametrized value
+ }
+} //Node end!!!...
+
+def gitCheckOut() {
+ git "https://github.com/vilvamani/${git_repo}.git"
+}
+
+def unittest(boolean skip = false) {
+ if (skip == true) {
+  println "Unit test case skipped"
+ } else {
+  sh "mvn clean test -U"
+ }
+}
+
+def build() {
+ sh "mvn install"
+}
+
+def dockerBuild(boolean skip = false) {
+ if (skip == true) {
+  println "Docker Build skipped"
+ } else {
+  sh "docker build -t ${service} ."
+ }
+}
+
+

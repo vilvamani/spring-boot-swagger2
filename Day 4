@@ -7,6 +7,9 @@ Assignment:
 3. Define Variables for docker build
 4. Define variabel for Satge skip
 
+Link:
+1. https://wiki.jenkins.io/display/JENKINS/Define+Parameters
+2. https://wiki.jenkins.io/display/JENKINS/Parameterized+Build
 
 1. Usage of Variables in Goovy
     Syntax:

@@ -1,0 +1,81 @@
+Day 5
+1. Try Ctach blook
+
+Syntax:
+
+try{
+   --- 
+} catch(Exception ex){
+---
+---
+} finally{
+
+}
+
+
+----
+node('laptop') {
+
+ try {
+     
+     sh "adsfsad"
+
+  git_repo = 'spring-boot-swagger2'
+  service = 'student-microsrvice'
+  unittest_skip = true
+
+  stage("Git Checkout") {
+   gitCheckOut()
+  }
+
+  stage("UnitTest") {
+   unittest(unittest_skip)
+  }
+
+  stage("Maven Buils") {
+   build()
+  }
+
+  stage("Docker Buils") {
+   dockerBuild() // Reading the docker_skip input from the parametrized value
+  }
+
+  currentBuild.result = "SUCCESS"
+ } catch (Exception e) {
+  println "********************"
+  println e
+  println "********************"
+  currentBuild.result = 'FAILURE'
+ } finally {
+  println "The current Job Status is ::::" + currentBuild.result
+
+  
+  currentBuild.description = "#${BUILD_NUMBER} - " + params.Environment + " - " + currentBuild.result   //Used in some special cases
+  currentBuild.displayName = "#${BUILD_NUMBER} - " + params.Environment + " - " + currentBuild.result   //Used in some special cases
+ }
+
+} //Node end!!!...
+
+def gitCheckOut() {
+ git "https://github.com/vilvamani/${git_repo}.git"
+}
+
+def unittest(boolean skip = false) {
+ if (skip == true) {
+  println "Unit test case skipped"
+ } else {
+  sh "mvn clean test -U"
+ }
+}
+
+def build() {
+ sh "mvn install"
+}
+
+def dockerBuild(boolean skip = false) {
+ if (skip == true) {
+  println "Docker Build skipped"
+ } else {
+  sh "docker build -t ${service} ."
+ }
+}

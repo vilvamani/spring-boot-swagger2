@@ -40,6 +40,11 @@
 		</site>
 	</distributionManagement>
 	<dependencies>
+        <dependency>
+            <groupId>com.h3xstream.findsecbugs</groupId>
+            <artifactId>findsecbugs-samples-deps</artifactId>
+            <scope>test</scope>
+        </dependency>
 		<dependency>
 			<groupId>io.springfox</groupId>
 			<artifactId>springfox-swagger2</artifactId>

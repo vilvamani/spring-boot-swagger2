@@ -67,23 +67,17 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.sonatype.sisu</groupId>
+			<artifactId>sisu-ehcache</artifactId>
+			<version>1.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.sonatype.sisu</groupId>
+			<artifactId>sisu-xmlrpc-client</artifactId>
+			<version>1.2.0</version>
+		</dependency>
 	</dependencies>
-	<repositories>
-		<repository>
-			<id>maven Repo1</id>
-			<name>maven Repo1</name>
-			<url>http://repo1.maven.org/maven2</url>
-		</repository>
-		<repository>
-			<id>Sonatype repository</id>
-			<name>Sonatype's Maven repository</name>
-			<url>http://oss.sonatype.org/content/groups/public</url>
-		</repository>
-		<repository>
-			<id>maven-group</id>
-			<url>http://your-host:8081/repository/maven-group/</url>
-		</repository>
-	</repositories>
 	<build>
 		<plugins>
 			<plugin>

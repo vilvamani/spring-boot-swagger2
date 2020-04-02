@@ -1,0 +1,118 @@
+Day 6:
+
+Build/Application Deployment Pipeline(CI/CD):
+1. GIT Checkout
+2. Get Author
+3. Unit test
+4. Publish Result
+5. App Build
+6. SonarQube Scan
+7. Docker Build
+8. Docker Push & CleanUp (Docker)
+9. Nexus Repo (Jar/War file)
+10. Docker Scan (Anchore)
+11. Deployment
+
+SonarScanner: https://github.com/SonarSource/sonar-scanning-examples
+
+node("laptop") {
+
+ git_commit_id = ""
+ git_author = ""
+ git_audthor_email = ""
+ docker_image_name = "vilvamani007/testrepo"
+ docker_image_tag = ""
+ docker_build_image = ""
+
+ try {
+  cleanWs()
+
+  stage('Code Checkout') {
+   git 'https://github.com/vilvamani/spring-boot-swagger2'
+  }
+
+  stage("Get Author") {
+   git_commit_id = sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%h'").trim()
+   git_author = sh(returnStdout: true, script: "git show -s --pretty=%an").trim()
+   git_audthor_email = sh(returnStdout: true, script: "git show -s --pretty=%ae").trim()
+  }
+
+  docker_image_tag = "GIT-${git_commit_id}"
+
+  stage("Unit test") {
+   sh "mvn clean test -U"
+  }
+
+  stage("Publish JUnit Result") {
+   junit allowEmptyResults: true, testResults: 'target/surefire-reports/*.xml'
+  }
+
+  stage("Maven Build") {
+   sh "mvn install"
+  }
+
+  stage("SonarQube") {
+   withSonarQubeEnv("SonarQube") {
+    sh 'mvn sonar:sonar'
+   }
+  }
+
+  stage("Docker Build") {
+   docker_build_image = docker.build("${docker_image_name}:${docker_image_tag}")
+  }
+
+  stage("Docker Push and CleanUP") {
+   // This step should not normally be used in your script. Consult the inline help for details.
+   withDockerRegistry(credentialsId: 'DockerHub') {
+    docker_build_image.push()
+
+    println("********* Removing dongling Images *********")
+    //sh "docker rmi $(docker images -q -f dangling=true)"
+   }
+  }
+
+  stage("Nexus") {
+   pom = readMavenPom file: "pom.xml";
+
+   filesByGlob = findFiles(glob: "target/*.${pom.packaging}");
+   artifactPath = filesByGlob[0].path;
+   echo "*** File: ${artifactPath}"
+   nexusArtifactUploader(
+    nexusVersion: "nexus3",
+    protocol: "http",
+    nexusUrl: "localhost:8081",
+    groupId: pom.groupId,
+    version: pom.version,
+    repository: "jenkins-training",
+    credentialsId: "Nexus",
+    artifacts: [
+     // Artifact generated such as .jar, .ear and .war files.
+     [artifactId: pom.artifactId,
+      classifier: '',
+      file: artifactPath,
+      type: pom.packaging
+     ],
+
+     // Lets upload the pom.xml file for additional information for Transitive dependencies
+     [artifactId: pom.artifactId,
+      classifier: '',
+      file: "pom.xml",
+      type: "pom"
+     ]
+    ]
+   );
+  }
+
+  stage('Anchore') {
+   writeFile file: 'anchore_images', text: "${docker_image_name}:${docker_image_tag}"
+   anchore engineRetries: '500', name: 'anchore_images'
+  }
+
+ } catch (Exception e) {
+  println "********************"
+  println e
+  println "********************"
+  currentBuild.result = 'FAILURE'
+ }
+
+}

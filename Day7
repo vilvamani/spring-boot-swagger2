@@ -10,6 +10,8 @@ node("laptop") {
 
  try {
   cleanWs()
+  
+  properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '7', numToKeepStr: '5')), disableConcurrentBuilds(), [$class: 'RebuildSettings', autoRebuild: false, rebuildDisabled: false], parameters([string(defaultValue: 'testrepo', description: '', name: 'ServiceName', trim: false), choice(choices: ['Dev', 'QA', 'PROD'], description: '', name: 'Environment')]), pipelineTriggers([cron('20 18 * * *')])])
 
   stage('Code Checkout') {
    git 'https://github.com/vilvamani/spring-boot-swagger2'

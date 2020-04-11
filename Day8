@@ -1,0 +1,52 @@
+The structure of the Compose file
+The compose file reference documentation is layed out following the structure of the Compose file. The main chapters in the docs are related to the top-level entries of the Compose file, these are the following as of today:
+
+version - specifies the version of the Compose file reference, you have seen it in the example.
+services - specifies the services in your application, we used it in the example.
+networks - you can define the networking set-up of your application here, we’ll see an example in a minute.
+volumes - you can define the volumes used by your applicaiton here, we’ll see an example.
+secrets - secrets are related to Swarm mode only, you can use them to provide secret information like passwords in a secure way to your application services.
+configs - configs lets you add external configuration to your containers. Keeping configurations external will make your containers more generic. Configs is available both in Compose and in Swarm mode.
+
+version: "3.7"
+services:
+  spring-boot-app:
+    build: 
+      context: ./spring-boot-swagger2
+    ports:
+      - "8081:8080"
+
+  training-jenkins-service1:
+    container_name: traning_jenkins1
+    image: jenkins/jenkins:lts
+    ports: 
+      - 8080:8080
+      - 50000:50000
+    volumes:
+      - "jenkins_data:/var/jenkins_home"  
+    networks: 
+      - jenkins_net1
+
+  postgresql:
+    image: postgres:9.5
+    container_name: local_database
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_DB=sampledatabase
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+    volumes:
+      - "db-data:/var/lib/postgresql/data"
+    networks:
+      - db_network
+
+volumes: 
+  jenkins_data:
+  jenkins_data1:
+  db-data:
+
+networks: 
+  jenkins_net1:
+  jenkins_net2:
+  db_network:

@@ -1,3 +1,0 @@
-#!groovy
-@Library('SharedLibrary@master') _
-java{}

@@ -5,11 +5,11 @@
               "Action": "DELETE",
               "ResourceRecordSet": {
                   "Type": "NS",
-                  "AliasTarget": {
-                      "EvaluateTargetHealth": false,
-                      "HostedZoneId": "Z09780531XAEYNZHSYU04",
-                      "DNSName": "traefik.intdev-audit.platform.navify.com."
-                  },
+                "ResourceRecords": [
+                    {
+                        "Value": "*"
+                    }
+                ],
                   "Name": "platform.navify.com",
                   "TTL": 30
               }

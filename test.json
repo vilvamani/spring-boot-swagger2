@@ -6,7 +6,12 @@
             "ResourceRecordSet": {
                 "Name": "traefik.intdev-audit.platform.navify.com.",
                 "Type": "NS",
-                "TTL": 30         
+                "TTL": 30,
+"AliasTarget": {
+          "HostedZoneId": "Z09780531XAEYNZHSYU04",
+          "DNSName": "traefik.intdev-audit.platform.navify.com.",
+          "EvaluateTargetHealth": false
+        }               
             }
         }
     ]

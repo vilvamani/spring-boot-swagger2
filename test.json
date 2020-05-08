@@ -1,18 +1,18 @@
-{
-    "Comment": "Delete single record set",
-    "Changes": [
-        {
-            "Action": "DELETE",
-            "ResourceRecordSet": {
-                "Name": "traefik.intdev-audit.platform.navify.com.",
-                "Type": "NS",
-                "TTL": 30,
-"AliasTarget": {
-          "HostedZoneId": "Z09780531XAEYNZHSYU04",
-          "DNSName": "traefik.intdev-audit.platform.navify.com.",
-          "EvaluateTargetHealth": false
-        }               
-            }
-        }
-    ]
-}
+ {
+      "Comment": "Update DNS record to the new Loadbalancer Endpoint",
+      "Changes": [
+          {
+              "Action": "DELETE",
+              "ResourceRecordSet": {
+                  "Type": "NS",
+                  "AliasTarget": {
+                      "EvaluateTargetHealth": false,
+                      "HostedZoneId": "Z09780531XAEYNZHSYU04",
+                      "DNSName": "traefik.intdev-audit.platform.navify.com."
+                  },
+                  "Name": "platform.navify.com",
+                  "TTL": 30
+              }
+          }
+      ]
+  }

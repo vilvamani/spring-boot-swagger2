@@ -10,7 +10,7 @@
                         "Value": "*"
                     }
                 ],
-                  "Name": "platform.navify.com",
+                  "Name": "traefik.intdev-audit.platform.navify.com.",
                   "TTL": 30
               }
           }

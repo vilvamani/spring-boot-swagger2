@@ -4,12 +4,12 @@
         {
             "Action": "DELETE",
             "ResourceRecordSet": {
-                "Name": "traefik.intdev-audit.platform.navify.com.",
+                "Name": "_b455605979abf719fd060149fa54f9c0.traefik.intdev-audit.platform.navify.com.",
                 "Type": "CNAME",
                 "TTL": 60,
                 "ResourceRecords": [
                     {
-                        "Value": "_b455605979abf719fd060149fa54f9c0.traefik.intdev-audit.platform.navify.com"
+                        "Value": "_74e561ab8312d9a8db14bc90f16b4218.auiqqraehs.acm-validations.aws."
                     }
                 ]                
             }

@@ -1,0 +1,13 @@
+{
+  "Comment": "optional comment about the changes in this change batch request",
+  "Changes": [
+    {
+      "Action": "DELETE",
+      "ResourceRecordSet": {
+        "Name": "_b455605979abf719fd060149fa54f9c0.traefik.intdev-audit.platform.navify.com",
+        "Type": "CNAME",
+        "TTL": 60
+      }
+    }
+  ]
+}

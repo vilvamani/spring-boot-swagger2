@@ -4,12 +4,12 @@
         {
             "Action": "DELETE",
             "ResourceRecordSet": {
-                "Name": "_0b87eacad5f92ef207782c58060420a3.traefik.navifyappdev-audit.platform.navify.com.",
+                "Name": "platform.traefik.navifyappdev-audit.platform.navify.com.",
                 "Type": "CNAME",
                 "TTL": 60,
                 "ResourceRecords": [
                     {
-                        "Value": "_59b494c8f1b832d714f4b439f3a5c4c1.auiqqraehs.acm-validations.aws"
+                        "Value": "navifyappdev-audit-NLB-internal-a418ede93baeddfb.elb.us-west-2.amazonaws.com"
                     }
                 ]                
             }

@@ -9,7 +9,7 @@
                 "TTL": 60,
                 "ResourceRecords": [
                     {
-                        "Value": "_0b87eacad5f92ef207782c58060420a3.traefik.navifyappdev-audit.platform.navify.com"
+                        "Value": "_59b494c8f1b832d714f4b439f3a5c4c1.auiqqraehs.acm-validations.aws"
                     }
                 ]                
             }

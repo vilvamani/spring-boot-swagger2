@@ -1,18 +1,27 @@
-{
-    "Comment": "Delete single record set",
-    "Changes": [
-        {
-            "Action": "DELETE",
-            "ResourceRecordSet": {
-                "Name": "platform.traefik.navifyappdev-audit.platform.navify.com.",
-                "Type": "CNAME",
-                "TTL": 60,
-                "ResourceRecords": [
-                    {
-                        "Value": "navifyappdev-audit-NLB-internal-a418ede93baeddfb.elb.us-west-2.amazonaws.com"
-                    }
-                ]                
-            }
-        }
-    ]
-}
+{	
+      "Comment": "Update DNS record to the new Loadbalancer Endpoint",	
+      "Changes": [	
+          {	
+              "Action": "DELETE",	
+              "ResourceRecordSet": {	
+                  "Type": "NS",	
+                "ResourceRecords": [	
+                    {	
+                        "Value": "ns-1201.awsdns-22.org"	
+                    },	
+                                     {	
+                        "Value": "ns-275.awsdns-34.com"	
+                    },	
+                                     {	
+                        "Value": "ns-2008.awsdns-59.co.uk"	
+                    },	
+                                     {	
+                        "Value": "ns-577.awsdns-08.net"	
+                    }	
+                ],	
+                  "Name": "traefik.navifyappdev-audit.platform.navify.com.",	
+                  "TTL": 30	
+              }	
+          }	
+      ]	
+  }

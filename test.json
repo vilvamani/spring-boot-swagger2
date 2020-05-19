@@ -4,7 +4,7 @@
         {
             "Action": "DELETE",
             "ResourceRecordSet": {
-                "Name": "traefik.navifyappdev-audit.platform.navify.com.",
+                "Name": "_0b87eacad5f92ef207782c58060420a3.traefik.navifyappdev-audit.platform.navify.com.",
                 "Type": "CNAME",
                 "TTL": 60,
                 "ResourceRecords": [

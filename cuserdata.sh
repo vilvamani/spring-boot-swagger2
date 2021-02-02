@@ -109,8 +109,7 @@ metadata:
 spec:
   selector:
     app: molecule
-  loadBalancerIP: $k8s_service_ip
-  type: LoadBalancer
+  type: NodePort
   ports:
   - protocol: TCP
     port: 80
@@ -161,6 +160,8 @@ kubectl apply -f https://raw.githubusercontent.com/vilvamani/boomi-aks/main/kube
 kubectl apply -f /tmp/service.yaml --kubeconfig=/root/.kube/config
 
 kubectl apply -f https://raw.githubusercontent.com/vilvamani/boomi-aks/main/kubernetes/hpa.yaml --kubeconfig=/root/.kube/config
+
+kubectl apply -f https://raw.githubusercontent.com/vilvamani/boomi-aks/main/kubernetes/ingress.yaml
 
 rm /tmp/secrets.yaml
 rm /tmp/service.yaml

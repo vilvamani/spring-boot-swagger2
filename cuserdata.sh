@@ -148,7 +148,7 @@ kubectl create secret generic azure-secret --from-literal=azurestorageaccountnam
 
 #kubectl apply -f https://raw.githubusercontent.com/vilvamani/boomi-aks/main/kubernetes/persistent_volume.yaml --kubeconfig=/root/.kube/config
 
-#kubectl apply -f https://raw.githubusercontent.com/Azure/aad-pod-identity/v1.6.0/deploy/infra/deployment-rbac.yaml --kubeconfig=/root/.kube/config
+kubectl apply -f https://raw.githubusercontent.com/Azure/aad-pod-identity/v1.6.0/deploy/infra/deployment-rbac.yaml --kubeconfig=/root/.kube/config
 
 kubectl apply -f /tmp/persistentvolume.yaml --kubeconfig=/root/.kube/config
 

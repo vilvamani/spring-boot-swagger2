@@ -109,7 +109,6 @@ metadata:
 spec:
   selector:
     app: molecule
-  type: NodePort
   ports:
   - protocol: TCP
     port: 80

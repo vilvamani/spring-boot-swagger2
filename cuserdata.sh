@@ -29,10 +29,6 @@ do
       molecule_account="$1"
       shift
       ;;
-    --k8s_service_ip)
-      k8s_service_ip="$1"
-      shift
-      ;;
     --fileshare)
       fileshare="$1"
       shift

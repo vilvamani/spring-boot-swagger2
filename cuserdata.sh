@@ -158,7 +158,7 @@ kubectl apply -f /tmp/service.yaml --kubeconfig=/root/.kube/config
 
 kubectl apply -f https://raw.githubusercontent.com/vilvamani/boomi-aks/main/kubernetes/hpa.yaml --kubeconfig=/root/.kube/config
 
-#kubectl apply -f https://raw.githubusercontent.com/vilvamani/boomi-aks/main/kubernetes/ingress.yaml --kubeconfig=/root/.kube/config
+kubectl apply -f https://raw.githubusercontent.com/vilvamani/boomi-aks/main/kubernetes/ingress.yaml --kubeconfig=/root/.kube/config
 
 rm /tmp/secrets.yaml
 rm /tmp/service.yaml

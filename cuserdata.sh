@@ -128,21 +128,16 @@ EOF
 cat >/tmp/persistentvolumeclam.yaml <<EOF
 ---
 apiVersion: v1
-kind: PersistentVolume
+kind: PersistentVolumeClaim
 metadata:
   name: azurefile
 spec:
-  storageClassName: "nfs-client"
-  capacity:
-    storage: 100Gi
   accessModes:
     - ReadWriteMany
-  mountOptions:
-    - vers=3
-  persistentVolumeReclaimPolicy: Retain
-  nfs:
-    server: $netAppIP
-    path: /$fileshare
+  storageClassName: "nfs-client"
+  resources:
+    requests:
+      storage: 100Gi
 EOF
 
 whoami

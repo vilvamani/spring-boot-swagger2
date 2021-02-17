@@ -157,3 +157,7 @@ kubectl apply -f https://raw.githubusercontent.com/vilvamani/boomi-aks/main/kube
 kubectl apply -f https://raw.githubusercontent.com/vilvamani/boomi-aks/main/kubernetes/hpa.yaml --kubeconfig=/root/.kube/config
 
 kubectl apply -f https://raw.githubusercontent.com/vilvamani/boomi-aks/main/kubernetes/ingress.yaml --kubeconfig=/root/.kube/config
+
+rm /tmp/secrets.yaml
+rm /tmp/persistentvolume.yaml
+rm /tmp/persistentvolumeclam.yaml

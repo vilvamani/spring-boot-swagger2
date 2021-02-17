@@ -90,7 +90,7 @@ chmod -R 777 ~/$fileshare
 
 helm repo add stable https://charts.helm.sh/stable
 
-helm install --generate-name --set nfs.server=$netAppIP --set nfs.path=/$fileshare stable/nfs-client-provisioner
+helm install --generate-name --set nfs.server=$netAppIP --set nfs.path=/$fileshare stable/nfs-client-provisioner --kubeconfig=/root/.kube/config
 
 cat >/tmp/secrets.yaml <<EOF
 ---

@@ -82,9 +82,15 @@ az login --identity
 
 az aks get-credentials --resource-group "$resource_group" --name "$aks_name"
 
+mkdir ~/$fileshare
+
+mount -t nfs -o rw,hard,rsize=1048576,wsize=1048576,vers=3,tcp $netAppIP:/$fileshare $fileshare
+
+chmod -R 777 ~/$fileshare
+
 helm repo add stable https://charts.helm.sh/stable
 
-helm install --generate-name --set nfs.server=$netAppIP --set nfs.path=$fileshare stable/nfs-client-provisioner
+helm install --generate-name --set nfs.server=$netAppIP --set nfs.path=/$fileshare stable/nfs-client-provisioner
 
 cat >/tmp/secrets.yaml <<EOF
 ---
@@ -116,7 +122,7 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   nfs:
     server: $netAppIP
-    path: $fileshare
+    path: /$fileshare
 EOF
 
 whoami

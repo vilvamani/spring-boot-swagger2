@@ -13,10 +13,6 @@ do
       aks_name="$1"
       shift
       ;;
-    --storage_acc_name|-san)
-      storage_acc_name="$1"
-      shift
-      ;;
     --molecule_username)
       molecule_username="$1"
       shift
@@ -27,10 +23,6 @@ do
       ;;
     --molecule_account)
       molecule_account="$1"
-      shift
-      ;;
-    --fileshare)
-      fileshare="$1"
       shift
       ;;
     --help|-help|-h)

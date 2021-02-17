@@ -25,6 +25,14 @@ do
       molecule_account="$1"
       shift
       ;;
+    --fileshare)
+      fileshare="$1"
+      shift
+      ;;
+    --netAppIP)
+      netAppIP="$1"
+      shift
+      ;;
     --help|-help|-h)
       print_usage
       exit 13
@@ -60,6 +68,8 @@ EOF
 
 yum install azure-cli -y
 
+yum install -y nfs-utils
+
 curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
 chmod 700 get_helm.sh
 ./get_helm.sh
@@ -72,4 +82,42 @@ az login --identity
 
 az aks get-credentials --resource-group "$resource_group" --name "$aks_name"
 
+helm repo add stable https://charts.helm.sh/stable
+
+helm install --generate-name --set nfs.server=$netAppIP --set nfs.path=$fileshare stable/nfs-client-provisioner
+
+cat >/tmp/secrets.yaml <<EOF
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: boomi-secret
+type: Opaque
+stringData:
+  username: $molecule_username
+  password: $molecule_password
+  account: $molecule_account
+EOF
+
+cat >/tmp/persistentvolume.yaml <<EOF
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: azurefile
+spec:
+  storageClassName: "nfs-client"
+  capacity:
+    storage: 100Gi
+  accessModes:
+    - ReadWriteMany
+  mountOptions:
+    - vers=3
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    server: $netAppIP
+    path: $fileshare
+EOF
+
+whoami
 

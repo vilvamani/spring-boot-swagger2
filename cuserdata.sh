@@ -125,5 +125,40 @@ spec:
     path: /$fileshare
 EOF
 
+cat >/tmp/persistentvolumeclam.yaml <<EOF
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: azurefile
+spec:
+  storageClassName: "nfs-client"
+  capacity:
+    storage: 100Gi
+  accessModes:
+    - ReadWriteMany
+  mountOptions:
+    - vers=3
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    server: $netAppIP
+    path: /$fileshare
+EOF
+
 whoami
 
+kubectl apply -f https://raw.githubusercontent.com/Azure/aad-pod-identity/v1.6.0/deploy/infra/deployment-rbac.yaml --kubeconfig=/root/.kube/config
+
+kubectl apply -f /tmp/secrets.yaml --kubeconfig=/root/.kube/config
+
+kubectl apply -f /tmp/persistentvolume.yaml --kubeconfig=/root/.kube/config
+
+kubectl apply -f /tmp/persistentvolumeclam.yaml --kubeconfig=/root/.kube/config
+
+kubectl apply -f https://raw.githubusercontent.com/vilvamani/boomi-aks/main/kubernetes/statefulset.yaml --kubeconfig=/root/.kube/config
+
+kubectl apply -f https://raw.githubusercontent.com/vilvamani/boomi-aks/main/kubernetes/services.yaml --kubeconfig=/root/.kube/config
+
+kubectl apply -f https://raw.githubusercontent.com/vilvamani/boomi-aks/main/kubernetes/hpa.yaml --kubeconfig=/root/.kube/config
+
+kubectl apply -f https://raw.githubusercontent.com/vilvamani/boomi-aks/main/kubernetes/ingress.yaml --kubeconfig=/root/.kube/config

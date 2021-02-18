@@ -88,9 +88,9 @@ mount -t nfs -o rw,hard,rsize=1048576,wsize=1048576,vers=3,tcp $netAppIP:/$files
 
 chmod -R 777 ~/$fileshare
 
-helm repo add stable https://charts.helm.sh/stable
+#helm repo add stable https://charts.helm.sh/stable
 
-helm install --generate-name --set nfs.server=$netAppIP --set nfs.path=/$fileshare stable/nfs-client-provisioner --kubeconfig=/root/.kube/config
+#helm install --generate-name --set nfs.server=$netAppIP --set nfs.path=/$fileshare stable/nfs-client-provisioner --kubeconfig=/root/.kube/config
 
 cat >/tmp/secrets.yaml <<EOF
 ---
@@ -112,7 +112,7 @@ kind: PersistentVolume
 metadata:
   name: azurefile
 spec:
-  storageClassName: "nfs-client"
+  storageClassName: ""
   capacity:
     storage: 100Gi
   accessModes:
@@ -134,7 +134,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteMany
-  storageClassName: "nfs-client"
+  storageClassName: ""
   resources:
     requests:
       storage: 100Gi

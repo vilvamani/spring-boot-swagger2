@@ -1,0 +1,9 @@
+steps:
+- id: git_clone
+  name: 'gcr.io/cloud-builders/git'
+  args: 
+  - clone
+  - -b
+  - main
+  - "${_GIT_REPO}"
+  - quick_start

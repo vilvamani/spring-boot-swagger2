@@ -1,5 +1,7 @@
 #!/bin/bash
 
-echo "test......."
+abc="test...."
+
+echo $abc
 
 exit 0

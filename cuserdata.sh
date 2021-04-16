@@ -2,6 +2,6 @@
 
 abc="test...."
 
-echo "{ "MyResult": [ "foo", "bar"] }" > $AZ_SCRIPTS_OUTPUT_PATH
+echo "{ "MyResult": [ "foo", "bar"] }" > /mnt/azscripts/azscriptoutput/text.txt
 
 exit 0

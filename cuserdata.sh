@@ -7,6 +7,8 @@ pip install -t . -r ./boomi_quickstart/functions/source/BoomiLicenseValidation/r
 
 wget https://raw.githubusercontent.com/vilvamani/spring-boot-swagger2/master/test.py
 
+az extension add --name aks-preview
+
 if [ $BOOMIAUTHENTICATIONTYPE == "token" ]
 then
     result=`python test.py "$MOLECULEACCOUNTID" "BOOMI_TOKEN.$MOLECULEUSERNAME" "$BOOMIMFAINSTALLTOKEN"`

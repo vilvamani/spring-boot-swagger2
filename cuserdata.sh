@@ -1,9 +1,8 @@
 #!/bin/bash
 pythonVersion=$(python --version)
 
-
 git clone https://github.com/vilvamani/quickstart-eks-boomi-molecule.git boomi_quickstart && cd boomi_quickstart/functions/source/BoomiLicenseValidation
-location=$(pwd)
+location=$(ls)
 pip install -t . -r ./requirements.txt
 
 # Create output for S3 endpoint IP 

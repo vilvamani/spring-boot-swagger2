@@ -11,7 +11,7 @@ az extension add --name aks-preview
 
 if [ $BOOMIAUTHENTICATIONTYPE == "token" ]
 then
-    result=`python test.py "$MOLECULEACCOUNTID" "BOOMI_TOKEN.$MOLECULEUSERNAME" "$BOOMIMFAINSTALLTOKEN"`
+    result=`python test.py "$MOLECULEACCOUNTID" "BOOMI_TOKEN.$MOLECULEUSERNAME" "$BOOMIMFAAPITOKEN"`
 else
     result=`python test.py "$MOLECULEACCOUNTID" "$MOLECULEUSERNAME" "$MOLECULEPASSWORD"`
 fi

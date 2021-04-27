@@ -1,7 +1,4 @@
 #!/bin/bash
-
-abc="test...."
-
-echo "{ "MyResult": [ "foo", "bar"] }" > /mnt/azscripts/azscriptoutput/text.txt
-
-exit 0
+serviceIp=$(python --version)
+# Create output for S3 endpoint IP 
+echo \{\"loadBalancerIP\":\"$serviceIp\"\} > $AZ_SCRIPTS_OUTPUT_PATH

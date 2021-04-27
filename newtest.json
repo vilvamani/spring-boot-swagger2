@@ -1,0 +1,264 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "deploymentCondition": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the deployment prefix"
+      }
+    },
+    "deploymentPrefix": {
+      "minLength": 3,
+      "maxLength": 8,
+      "type": "string",
+      "metadata": {
+        "description": "Name of the deployment prefix"
+      }
+    },
+    "virtualNetworkAddressPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Containers DNS server IP address."
+      }
+    },
+    "virtualMachineSubnetAddressPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Containers DNS server IP address."
+      }
+    },
+    "aksSubnetAddressPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Containers DNS server IP address."
+      }
+    },
+    "applicationGatewaySubnetAddressPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Containers DNS server IP address."
+      }
+    },
+    "netAppFileSubnetAddressPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Containers DNS server IP address."
+      }
+    },
+    "aksDnsPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "Optional DNS prefix to use with hosted Kubernetes API server FQDN."
+      }
+    },
+    "aksAgentOsDiskSizeGB": {
+      "minValue": 30,
+      "maxValue": 1023,
+      "type": "int",
+      "metadata": {
+        "description": "Disk size (in GB) to provision for each of the agent pool nodes. This value ranges from 30 to 1023."
+      }
+    },
+    "aksAgentCount": {
+      "minValue": 1,
+      "maxValue": 50,
+      "type": "int",
+      "metadata": {
+        "description": "The number of agent nodes for the cluster."
+      }
+    },
+    "aksAgentVMSize": {
+      "allowedValues": [
+        "Standard_D1",
+        "Standard_D2",
+        "Standard_D3",
+        "Standard_D4",
+        "Standard_D1_v2",
+        "Standard_D2_v2",
+        "Standard_D3_v2",
+        "Standard_D4_v2",
+        "Standard_DS1",
+        "Standard_DS2",
+        "Standard_DS3",
+        "Standard_DS4",
+        "Standard_DS1_v2",
+        "Standard_DS2_v2",
+        "Standard_DS3_v2",
+        "Standard_DS4_v2"
+      ],
+      "type": "string",
+      "metadata": {
+        "description": "The size of the Virtual Machine."
+      }
+    },
+    "kubernetesVersion": {
+      "allowedValues": [
+        "1.19.7",
+        "1.19.6",
+        "1.18.14",
+        "1.18.10"
+      ],
+      "type": "string",
+      "metadata": {
+        "description": "The version of Kubernetes."
+      }
+    },
+    "aksServiceCIDR": {
+      "type": "string",
+      "metadata": {
+        "description": "A CIDR notation IP range from which to assign service cluster IPs."
+      }
+    },
+    "aksDnsServiceIP": {
+      "type": "string",
+      "metadata": {
+        "description": "Containers DNS server IP address."
+      }
+    },
+    "aksDockerBridgeCIDR": {
+      "type": "string",
+      "metadata": {
+        "description": "A CIDR notation IP for Docker bridge."
+      }
+    },
+    "aksAgentMaxPods": {
+      "type": "int",
+      "metadata": {
+        "description": "Specifies the maximum number of pods that can run on a node. The maximum number of pods per node in an AKS cluster is 250. The default maximum number of pods per node varies between kubenet and Azure CNI networking, and the method of cluster deployment."
+      }
+    },
+    "virtualMachineSize": {
+      "allowedValues": [
+        "Standard_B1s",
+        "Standard_DS1_v2"
+      ],
+      "type": "string",
+      "metadata": {
+        "description": "Virtual machine size (has to be at least the size of Standard_A3 to support 2 NICs)"
+      }
+    },
+    "netAppServiceLevel": {
+      "type": "string",
+      "allowedValues": [
+        "Premium",
+        "Ultra",
+        "Standard"
+      ],
+      "metadata": {
+        "description": "Target performance for the capacity pool. Service level: Ultra, Premium, or Standard."
+      }
+    },
+    "adminUsername": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Bastion server login username"
+      }
+    },
+    "adminPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Bastion server login password"
+      }
+    },
+    "BoomiAuthenticationType": {
+      "defaultValue": "token",
+      "allowedValues": [
+        "password",
+        "token"
+      ],
+      "type": "string",
+      "metadata": {
+        "description": "Boomi Platform Authentication Type"
+      }
+    },
+    "MoleculeUsername": {
+      "defaultValue": "",
+      "type": "securestring",
+      "metadata": {
+        "description": "The email account associated with the Boomi account."
+      }
+    },
+    "MoleculePassword": {
+      "defaultValue": "",
+      "type": "securestring",
+      "metadata": {
+        "description": "The password associated with the Boomi account."
+      }
+    },
+    "MoleculeAccountID": {
+      "defaultValue": "",
+      "type": "securestring",
+      "metadata": {
+        "description": "The Boomi account ID that you want to associate with the new Molecule cluster."
+      }
+    },
+    "BoomiMFAInstallToken": {
+      "defaultValue": "",
+      "type": "securestring",
+      "metadata": {
+        "description": "An MFA installation token generated by your Dell Boomi Administrator."
+      }
+    }
+  },
+  "variables": {
+    "resgpguid": "[substring(replace(uniqueString(resourceGroup().id), '-', ''), 0, 4)]",
+    "prefix": "[toLower(parameters('deploymentPrefix'))]",
+    "nodeResourceGroup": "[concat(resourceGroup().name, '-ingressResourceGroup')]",
+    "aksUserIdentityName": "[concat(variables('prefix'), '-aksUserContrIdentity-', variables('resgpguid'))]",
+    "vmUserIdentityName": "[concat(variables('prefix'), '-vmUserContrIdentity-', variables('resgpguid'))]",
+    "appGatewayNsgName": "[concat(variables('prefix'), '-appgw-nsg-', variables('resgpguid'))]",
+    "vmNsgName": "[concat(variables('prefix'), '-vm-nsg-', variables('resgpguid'))]",
+    "kubernetesNsgName": "[concat(variables('prefix'), '-kubernetes-nsg-', variables('resgpguid'))]",
+    "vnetName": "[concat(variables('prefix'), '-vnet-', variables('resgpguid'))]",
+    "virtualMachineSubnetName": "[concat(variables('prefix'), '-vm-subnet')]",
+    "kubernetesSubnetName": "[concat(variables('prefix'), '-kubernetes-subnet')]",
+    "applicationGatewaySubnetName": "[concat(variables('prefix'), '-appgw-subnet')]",
+    "netAppFileSubnetName": "[concat(variables('prefix'), '-netapp-subnet')]",
+    "netAppFileDelegationsName": "[concat(variables('prefix'), '-netAppDelegation')]",
+    "virtualMachinePublicIpName": "[concat(variables('prefix'), '-vmpublicip-', variables('resgpguid'))]",
+    "netAppAccountName": "[concat('anfacc', uniqueString(resourceGroup().id))]",
+    "netAppPoolName": "[concat('pool', uniqueString(resourceGroup().id))]",
+    "capacityPoolName": "[concat(variables('netAppAccountName'), '/',variables('netAppPoolName'))]",
+    "netAppVolumeName": "[concat('volume', uniqueString(resourceGroup().id))]",
+    "volumeName": "[concat(variables('netAppAccountName'), '/',variables('netAppPoolName'),'/', variables('netAppVolumeName'))]",
+    "aksClusterName": "[concat(variables('prefix'), '-aks-', variables('resgpguid'))]",
+    "virtualMachineNicName": "[concat(variables('prefix'), '-vm-nic-', variables('resgpguid'))]",
+    "virtualMachineName": "[concat(variables('prefix'), '-bastion-vm-', variables('resgpguid'))]",
+    "osDiskName": "[concat(variables('prefix'), '-os-disk-', variables('resgpguid'))]",
+    "aksUserIdentityId": "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('aksUserIdentityName'))]",
+    "vmUserIdentityId": "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('vmUserIdentityName'))]",
+    "kubernetesNsgId": "[resourceId('Microsoft.Network/networkSecurityGroups',variables('kubernetesNsgName'))]",
+    "appGatewayNsgId": "[resourceId('Microsoft.Network/networkSecurityGroups',variables('appGatewayNsgName'))]",
+    "vmNsgId": "[resourceId('Microsoft.Network/networkSecurityGroups',variables('vmNsgName'))]",
+    "vnetId": "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetName'))]",
+    "virtualMachineSubnetId": "[concat(variables('vnetID'),'/subnets/', variables('virtualMachineSubnetName'))]",
+    "kubernetesSubnetId": "[concat(variables('vnetID'),'/subnets/', variables('kubernetesSubnetName'))]",
+    "applicationGatewaySubnetId": "[concat(variables('vnetID'),'/subnets/', variables('applicationGatewaySubnetName'))]",
+    "virtualMachinePublicIpId": "[resourceId('Microsoft.Network/publicIPAddresses',variables('virtualMachinePublicIpName'))]",
+    "aksClusterId": "[resourceId('Microsoft.ContainerService/managedClusters', variables('aksClusterName'))]",
+    "virtualMachineNicId": "[resourceId('Microsoft.Network/networkInterfaces', variables('virtualMachineNicName'))]",
+    "virtualMachineId": "[resourceId('Microsoft.Compute/virtualMachines', variables('virtualMachineName'))]",
+    "contributorRole": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
+    "readerRole": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'acdd72a7-3385-48ef-bd42-f606fba81ae7')]",
+    "apiVersion": {
+      "userAssignedIdentities": "2018-11-30",
+      "roleAssignments": "2020-04-01-preview",
+      "network": "2020-07-01",
+      "netapp": "2020-09-01",
+      "aksCluster": "2020-12-01",
+      "compute": "2020-06-01",
+      "deployments": "2020-10-01",
+      "extensions": "2020-06-01"
+    }
+  },
+  "resources": [
+    { 
+      "condition": "[equals(parameters('deploymentCondition'), 'SUCCESS')]",
+      "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+      "name": "[variables('aksUserIdentityName')]",
+      "apiVersion": "[variables('apiVersion').userAssignedIdentities]",
+      "location": "[resourceGroup().location]"
+    }
+  ]
+}

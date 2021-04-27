@@ -93,12 +93,6 @@
       }
     },
     "kubernetesVersion": {
-      "allowedValues": [
-        "1.19.7",
-        "1.19.6",
-        "1.18.14",
-        "1.18.10"
-      ],
       "type": "string",
       "metadata": {
         "description": "The version of Kubernetes."

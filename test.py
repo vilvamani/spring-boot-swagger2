@@ -37,12 +37,9 @@ if __name__ == '__main__':
 			logging.info('Exception: No enterprise license available')
 
 	except requests.exceptions.RequestException as err:
-		print("1")
 		status = "FAILED"
 
 	except Exception as e:
-		print("2")
-		print(e)
 		status = "FAILED"
 	finally:
 		print(status)

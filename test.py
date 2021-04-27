@@ -11,8 +11,8 @@ headers = {'Content-Type': 'application/json', 'Accept': 'application/json'}
 if __name__ == '__main__':
 	status = "SUCCESS"
 	try:
-		account_id = sys.argv[2]
-		username = sys.argv[3]
+		account_id = sys.argv[1]
+		username = sys.argv[2]
 		password = sys.argv[3]
 
 		headers.update(urllib3.util.make_headers(basic_auth=f"{username}:{password}"))

@@ -88,4 +88,4 @@ if __name__ == "__main__":
         logging.error(err)
         STATUS = "FAILED"
     finally:
-        print({"status": STATUS, "token": molecule_token})
+        print("status: {},token: {}".format(STATUS,molecule_token))

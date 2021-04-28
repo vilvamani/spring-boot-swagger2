@@ -1,5 +1,5 @@
 #!/bin/bash
-result=$(az feature show --name AKS-IngressApplicationGatewayAddon --namespace Microsoft.ContainerService)
+result=$(az extension add --name aks-preview)
 
 echo $result
 

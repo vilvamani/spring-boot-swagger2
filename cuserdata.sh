@@ -14,4 +14,7 @@ else
     result=`python test.py "$MOLECULEACCOUNTID" "$MOLECULEUSERNAME" "$MOLECULEPASSWORD" MOLECULE 60`
 fi
 
-echo \{\"result\":\"$result\"\} > $AZ_SCRIPTS_OUTPUT_PATH
+status=`echo $result|cut -d, -f1|awk -F':' '{ print $2 }'`
+token=`echo $result|cut -d, -f2|awk -F':' '{ print $2 }'`
+
+echo \{\"license_validation\":\"$status\"\, \"installation_token\":\"$token\"\} > $AZ_SCRIPTS_OUTPUT_PATH

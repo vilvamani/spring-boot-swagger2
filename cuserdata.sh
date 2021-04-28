@@ -4,4 +4,4 @@ result=$(az feature show --name AKS-IngressApplicationGatewayAddon --namespace M
 
 status=jq --version
 
-echo \{\"license_validation\":\"$status\"\} > $AZ_SCRIPTS_OUTPUT_PATH
+echo \{\"license_validation\":\"$status\"\,\"result\":\"$result\"\} > $AZ_SCRIPTS_OUTPUT_PATH

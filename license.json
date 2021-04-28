@@ -19,7 +19,6 @@
             }
         },
         "MoleculePassword": {
-            "defaultValue": "",
             "type": "securestring",
             "metadata": {
                 "description": "The password associated with the Boomi account."
@@ -84,10 +83,6 @@
                         "value": "[parameters('MoleculeAccountID')]"
                     },
                     {
-                        "name": "BOOMIMFAINSTALLTOKEN",
-                        "value": "[parameters('BoomiMFAInstallToken')]"
-                    },
-                    {
                         "name": "BOOMIMFAAPITOKEN",
                         "value": "[parameters('BoomiMFAAPIToken')]"
                     }
@@ -99,9 +94,13 @@
         }
     ],
     "outputs": {
-        "finalResult": {
+        "licenseValidation": {
             "type": "string",
-            "value": "[reference(resourceId('Microsoft.Resources/deploymentScripts', 'boomiLicenseValidate')).outputs.result]"
+            "value": "[reference(resourceId('Microsoft.Resources/deploymentScripts', 'boomiLicenseValidate')).outputs.license_validation]"
+        },
+        "installationToken": {
+            "type": "string",
+            "value": "[reference(resourceId('Microsoft.Resources/deploymentScripts', 'boomiLicenseValidate')).outputs.installation_token]"
         }
     }
 }

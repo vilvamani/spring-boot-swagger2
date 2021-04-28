@@ -202,7 +202,6 @@
             "condition": "[equals(parameters('deploymentCondition'), 'SUCCESS')]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
-            "dependsOn": [ "BoomiLicenseValidation" ],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -210,9 +209,6 @@
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
-                    "deploymentCondition": {
-                        "value": "[reference('BoomiLicenseValidation').outputs.finalResult.value]"
-                    },
                     "deploymentPrefix": {
                         "value": "[parameters('deploymentPrefix')]"
                     },

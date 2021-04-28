@@ -2,6 +2,6 @@
 result=$(az feature show --name AKS-IngressApplicationGatewayAddon --namespace Microsoft.ContainerService)
 
 
-status=`echo $result | jq .properties.state`
+status=jq --version
 
 echo \{\"license_validation\":\"$status\"\} > $AZ_SCRIPTS_OUTPUT_PATH

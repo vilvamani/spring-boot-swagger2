@@ -39,6 +39,7 @@ podTemplate(label: label, containers: [
 
         container('nodejs') {
           stage('Install') {
+              sh 'apk add --update && apk install git -y'
               getGitCredentials()
               IMAGE_VERSION = "${GIT_COMMIT}-${BRANCH_NAME}-${BUILD_NUMBER}"
           }

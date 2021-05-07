@@ -23,9 +23,7 @@ podTemplate(label: label, containers: [
     configMapVolume(configMapName: 'docker-config', mountPath: '/kaniko/.docker/'),
   ],
   envVars: [],
-  annotations: [
-    podAnnotation(key: "iam.amazonaws.com/role", value: "arn:aws:iam::549050352176:role/translated-reviews-deploy")
-  ]/*,
+  annotations: []/*,
   runAsUser: '1000',
   runAsGroup: '1000'*/
 ) {

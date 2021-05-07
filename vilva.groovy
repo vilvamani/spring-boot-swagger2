@@ -17,7 +17,7 @@ podTemplate(label: label, containers: [
     containerTemplate(name: 'awscli', image: 'amazon/aws-cli:2.2.3', command: 'cat', ttyEnabled: true),
     containerTemplate(name: 'sonarqube', image: 'sonarsource/sonar-scanner-cli:4.6', command: 'cat', ttyEnabled: true),
     containerTemplate(name: 'maven', image: 'vilvamani007/docker-slave-maven:1', command: 'cat', ttyEnabled: true),
-    containerTemplate(name: 'kaniko', image: 'gcr.io/kaniko-project/executor:debug', command: '/busybox/cat', ttyEnabled: true, privileged: true),
+    containerTemplate(name: 'kaniko', image: 'gcr.io/kaniko-project/executor:debug', command: '/busybox/cat', ttyEnabled: true, privileged: true, runAsUser: 0),
   ],
   volumes: [
     //configMapVolume(configMapName: 'docker-config', mountPath: '/kaniko/.docker/'),

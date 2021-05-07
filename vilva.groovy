@@ -47,6 +47,17 @@ podTemplate(label: label, containers: [
               sh "mvn clean install"
           }
         }
+
+          stage('Create Docker images') {
+            container(name: 'kaniko', shell: '/busybox/sh') {
+              withEnv(['PATH+EXTRA=/busybox:/kaniko']) {
+                sh """#!/busybox/sh
+                ls -l
+                /kaniko/executor -f `pwd`/Dockerfile -c `pwd` --destination=vilvamani007/test:${IMAGE_VERSION}
+                """
+              }
+            }
+          }
       }
 
     } catch (FlowInterruptedException interruptEx) {

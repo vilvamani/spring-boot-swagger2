@@ -20,7 +20,7 @@ podTemplate(label: label, containers: [
     containerTemplate(name: 'kaniko', image: 'gcr.io/kaniko-project/executor:debug', command: '/busybox/cat', ttyEnabled: true),
   ],
   volumes: [
-    configMapVolume(configMapName: 'docker-config', mountPath: '/kaniko/.docker/'),
+    //configMapVolume(configMapName: 'docker-config', mountPath: '/kaniko/.docker/'),
   ],
   envVars: [],
   annotations: [

@@ -29,7 +29,7 @@ podTemplate(label: label, containers: [
   runAsUser: '1000',
   runAsGroup: '1000'
 ) {
-  timeout(time: 2, unit: 'HOURS') {
+  timeout(time: 30, unit: 'MINUTES') {
     try {
       node(label) {
         properties([
@@ -38,9 +38,13 @@ podTemplate(label: label, containers: [
         ])
 
         container('maven') {
-          stage('Install') {
+          stage('Git Checkout') {
               getGitCredentials()
               IMAGE_VERSION = "${GIT_COMMIT}-${BRANCH_NAME}-${BUILD_NUMBER}"
+          }
+
+          stage('Maven Build') {
+              sh "mvn clean install"
           }
         }
       }

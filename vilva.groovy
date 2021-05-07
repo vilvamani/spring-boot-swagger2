@@ -26,8 +26,8 @@ podTemplate(label: label, containers: [
   annotations: [
     podAnnotation(key: "iam.amazonaws.com/role", value: "arn:aws:iam::549050352176:role/translated-reviews-deploy")
   ],
-  runAsUser: '1000',
-  runAsGroup: '1000'
+  //runAsUser: '1000',
+  //runAsGroup: '1000'
 ) {
   timeout(time: 30, unit: 'MINUTES') {
     try {

@@ -13,11 +13,11 @@ def getGitCredentials() {
 
 
 podTemplate(label: label, containers: [
-    containerTemplate(name: 'jnlp', image: 'jenkins/jnlp-slave:4.7-1-alpine', args: '${computer.jnlpmac} ${computer.name}'),
-    containerTemplate(name: 'awscli', image: 'amazon/aws-cli:2.2.3', command: 'cat', ttyEnabled: true),
-    containerTemplate(name: 'sonarqube', image: 'sonarsource/sonar-scanner-cli:4.6', command: 'cat', ttyEnabled: true),
-    containerTemplate(name: 'nodejs', image: 'node:11-alpine', command: 'cat', ttyEnabled: true),
-    containerTemplate(name: 'kaniko', image: 'gcr.io/kaniko-project/executor:debug', command: '/busybox/cat', ttyEnabled: true),
+    containerTemplate(name: 'jnlp', image: 'jenkins/jnlp-slave:4.7-1-alpine', args: '${computer.jnlpmac} ${computer.name}', privileged: true,),
+    containerTemplate(name: 'awscli', image: 'amazon/aws-cli:2.2.3', command: 'cat', ttyEnabled: true, privileged: true,),
+    containerTemplate(name: 'sonarqube', image: 'sonarsource/sonar-scanner-cli:4.6', command: 'cat', ttyEnabled: true, privileged: true,),
+    containerTemplate(name: 'nodejs', image: 'node:11-alpine', command: 'cat', ttyEnabled: true, privileged: true,),
+    containerTemplate(name: 'kaniko', image: 'gcr.io/kaniko-project/executor:debug', command: '/busybox/cat', ttyEnabled: true, privileged: true,),
   ],
   volumes: [
     //configMapVolume(configMapName: 'docker-config', mountPath: '/kaniko/.docker/'),
@@ -39,6 +39,7 @@ podTemplate(label: label, containers: [
 
         container('nodejs') {
           stage('Install') {
+            sh 'apk add --update python'
               getGitCredentials()
               IMAGE_VERSION = "${GIT_COMMIT}-${BRANCH_NAME}-${BUILD_NUMBER}"
           }

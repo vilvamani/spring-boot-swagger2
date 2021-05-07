@@ -13,7 +13,7 @@ def getGitCredentials() {
 
 
 podTemplate(label: label, containers: [
-    containerTemplate(name: 'jnlp', image: '549050352176.dkr.ecr.us-east-1.amazonaws.com/translated-reviews/jenkins-jnlp:4.7-1', args: '${computer.jnlpmac} ${computer.name}'),
+    containerTemplate(name: 'jnlp', image: 'jenkins/jnlp-slave:4.7-1-alpine', args: '${computer.jnlpmac} ${computer.name}'),
     containerTemplate(name: 'awscli', image: 'amazon/aws-cli:2.2.3', command: 'cat', ttyEnabled: true),
     containerTemplate(name: 'sonarqube', image: 'sonarsource/sonar-scanner-cli:4.6', command: 'cat', ttyEnabled: true),
     containerTemplate(name: 'nodejs', image: 'node:11-alpine', command: 'cat', ttyEnabled: true),

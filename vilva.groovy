@@ -13,11 +13,11 @@ def getGitCredentials() {
 
 
 podTemplate(label: label, containers: [
-    containerTemplate(name: 'jnlp', image: 'jenkins/jnlp-slave:4.7-1-alpine', args: '${computer.jnlpmac} ${computer.name}'),
-    containerTemplate(name: 'awscli', image: 'amazon/aws-cli:2.2.3', command: 'cat', ttyEnabled: true),
-    containerTemplate(name: 'sonarqube', image: 'sonarsource/sonar-scanner-cli:4.6', command: 'cat', ttyEnabled: true),
-    containerTemplate(name: 'maven', image: 'vilvamani007/docker-slave-maven:1', command: 'cat', ttyEnabled: true),
-    containerTemplate(name: 'kaniko', image: 'gcr.io/kaniko-project/executor:debug', command: '/busybox/cat', ttyEnabled: true, privileged: true, runAsUser: 0),
+    containerTemplate(name: 'jnlp', image: 'jenkins/jnlp-slave:4.7-1-alpine', args: '${computer.jnlpmac} ${computer.name}', runAsGroup: '1000', runAsUser: '1000'),
+    containerTemplate(name: 'awscli', image: 'amazon/aws-cli:2.2.3', command: 'cat', ttyEnabled: true, runAsGroup: '1000', runAsUser: '1000'),
+    containerTemplate(name: 'sonarqube', image: 'sonarsource/sonar-scanner-cli:4.6', command: 'cat', ttyEnabled: true, runAsGroup: '1000', runAsUser: '1000'),
+    containerTemplate(name: 'maven', image: 'vilvamani007/docker-slave-maven:1', command: 'cat', ttyEnabled: true, runAsGroup: '1000', runAsUser: '1000'),
+    containerTemplate(name: 'kaniko', image: 'gcr.io/kaniko-project/executor:debug', command: '/busybox/cat', ttyEnabled: true, privileged: true, runAsGroup: '0', runAsUser: '0'),
   ],
   volumes: [
     //configMapVolume(configMapName: 'docker-config', mountPath: '/kaniko/.docker/'),
@@ -25,9 +25,9 @@ podTemplate(label: label, containers: [
   envVars: [],
   annotations: [
     podAnnotation(key: "iam.amazonaws.com/role", value: "arn:aws:iam::549050352176:role/translated-reviews-deploy")
-  ],
+  ]/*,
   runAsUser: '1000',
-  runAsGroup: '1000'
+  runAsGroup: '1000'*/
 ) {
   timeout(time: 30, unit: 'MINUTES') {
     try {

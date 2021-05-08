@@ -48,7 +48,7 @@ podTemplate(label: label, containers: [
         
         stage('SonarQube') {
           container('sonarqube') {
-            withSonarQubeEnv(credentialsId: 'sonarqube_token') {
+            withSonarQubeEnv('SonarQube') {
               sh '''
               sonar-scanner -Dsonar.projectBaseDir=${WORKSPACE}
             '''

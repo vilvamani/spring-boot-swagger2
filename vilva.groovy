@@ -41,20 +41,42 @@ podTemplate(label: label, containers: [
               IMAGE_VERSION = "${GIT_COMMIT}-${BRANCH_NAME}-${BUILD_NUMBER}"
           }
 
-          stage('Maven Build') {
-              sh "mvn clean install"
+          stage("Read Author") {
+              git_commit = sh label: 'get last commit',
+                  returnStdout: true,
+                  script: 'git rev-parse --short HEAD~0'
+              author_email = sh label: 'get last commit',
+                  returnStdout: true,
+                  script: 'git log -1 --pretty=format:"%ae"'
           }
-        }
-        
+
+          stage("UnitTest") {
+              sh 'mvn clean test -U'
+          }
+
+          stage("Publish Report"){
+              junit(
+                  allowEmptyResults: true,
+                  testResults: '**/target/surefire-reports/*.xml,' +
+                          '**/target/failsafe-reports/*.xml'
+              )
+              jacoco()
+          }
+
+          stage("Maven Build") {
+              sh "mvn install -DskipTests"
+          }
+          
         stage('SonarQube') {
-          container('sonarqube') {
             withSonarQubeEnv('SonarQube') {
               sh '''
               mvn clean verify sonar:sonar
             '''
             }
-          }
         }
+        }
+        
+
 
           stage('Create Docker images') {
             container(name: 'kaniko', shell: '/busybox/sh') {

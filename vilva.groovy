@@ -50,7 +50,7 @@ podTemplate(label: label, containers: [
           container('sonarqube') {
             withSonarQubeEnv('SonarQube') {
               sh '''
-              sonar-scanner -Dsonar.projectBaseDir=${WORKSPACE}
+              mvn clean verify sonar:sonar
             '''
             }
           }

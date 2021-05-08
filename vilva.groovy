@@ -45,6 +45,16 @@ podTemplate(label: label, containers: [
               sh "mvn clean install"
           }
         }
+        
+        stage('SonarQube') {
+          container('sonarqube') {
+            withSonarQubeEnv('SonarQube') {
+              sh '''
+              sonar-scanner -Dsonar.projectBaseDir=${WORKSPACE}
+            '''
+            }
+          }
+        }
 
           stage('Create Docker images') {
             container(name: 'kaniko', shell: '/busybox/sh') {

@@ -88,6 +88,7 @@ podTemplate(label: label, containers: [
             '''
             }
           }
+          kubernetesDeploy configs: 'https://raw.githubusercontent.com/kubernetes/website/master/content/en/examples/service/networking/run-my-nginx.yaml', kubeconfigId: 'kubeconfig'
         }
       }
     } 

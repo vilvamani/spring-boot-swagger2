@@ -87,10 +87,10 @@ podTemplate(label: label, containers: [
             }
           }
         }
-        
+
         stage("Kubernetes") {
           container('kubectl') {
-            sh "kubectl get pods"
+            sh "kubectl apply -f https://raw.githubusercontent.com/vilvamani/spring-boot-swagger2/master/nginx.yaml"
           }
         }
       }

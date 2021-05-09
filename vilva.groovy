@@ -87,8 +87,9 @@ podTemplate(label: label, containers: [
               /kaniko/executor -f `pwd`/Dockerfile -c `pwd` --destination=vilvamani007/test:${IMAGE_VERSION}
             '''
             }
+            
+            kubernetesDeploy configs: './nginx.yaml', kubeconfigId: 'kubeconfig'
           }
-          kubernetesDeploy configs: './nginx.yaml', kubeconfigId: 'kubeconfig'
         }
       }
     } 

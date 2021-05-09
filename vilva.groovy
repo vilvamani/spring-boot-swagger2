@@ -18,6 +18,7 @@ podTemplate(label: label, containers: [
     containerTemplate(name: 'sonarqube', image: 'sonarsource/sonar-scanner-cli:4.6', command: 'cat', ttyEnabled: true, runAsGroup: '1000', runAsUser: '1000'),
     containerTemplate(name: 'maven', image: 'vilvamani007/k8s-docker-slave:maven1', command: 'cat', ttyEnabled: true, runAsGroup: '1000', runAsUser: '1000'),
     containerTemplate(name: 'kaniko', image: 'gcr.io/kaniko-project/executor:debug', command: '/busybox/cat', ttyEnabled: true, privileged: true, runAsGroup: '0', runAsUser: '0'),
+    containerTemplate(name: 'kubectl', image: 'bitnami/kubectl', command: 'cat', ttyEnabled: true, runAsGroup: '1000', runAsUser: '1000'),
   ],
   volumes: [
     configMapVolume(configMapName: 'docker-config', mountPath: '/kaniko/.docker/'),
@@ -32,7 +33,6 @@ podTemplate(label: label, containers: [
       node(label) {
         properties([
           disableConcurrentBuilds(),
-          parameters([booleanParam(defaultValue: false, description: 'Whether or not to wait for canary deployment + check', name: 'skipCanary')])
         ])
 
         container('maven') {
@@ -87,8 +87,11 @@ podTemplate(label: label, containers: [
             }
           }
         }
+        
         stage("Kubernetes") {
-          sh "kubectl apply -f https://raw.githubusercontent.com/vilvamani/spring-boot-swagger2/master/nginx.yaml"
+          container('kubectl') {
+            sh "kubectl get pods"
+          }
         }
       }
     } 

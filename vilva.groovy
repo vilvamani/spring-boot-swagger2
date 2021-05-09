@@ -120,13 +120,9 @@ podTemplate(label: label, containers: [
       throw failure
     }
     finally{
-            post {
-        always {
 	    /* Use slackNotifier.groovy from shared library and provide current build result as parameter */   
-            slackNotifier(currentBuild.currentResult)
-            cleanWs()
-        }
+        slackNotifier(currentBuild.currentResult)
+        cleanWs()
     }
   }
-}
 }

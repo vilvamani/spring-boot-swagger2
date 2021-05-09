@@ -66,18 +66,18 @@ podTemplate(label: label, containers: [
           stage("Maven Build") {
               sh "mvn install -DskipTests"
           }
-          
+        }
+
         stage('SonarQube') {
+          container('sonarqube') {
             withSonarQubeEnv('SonarQube') {
               sh '''
-              mvn clean verify sonar:sonar
+              sonar-scanner -Dsonar.projectBaseDir=${WORKSPACE} -Dsonar.login="${SONARQUBE_API_TOKEN}"
             '''
             }
-        }
+          }
         }
         
-
-
           stage('Create Docker images') {
             container(name: 'kaniko', shell: '/busybox/sh') {
               withEnv(['PATH+EXTRA=/busybox:/kaniko']) {

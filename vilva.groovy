@@ -76,17 +76,16 @@ podTemplate(label: label, containers: [
               '''
             }
           }
-          
-          stage("OWASP Dependancy Check"){
-            dependencyCheck additionalArguments: '', odcInstallation: 'owasp'
-            dependencyCheckPublisher pattern: 'dependency-check-report.xml'
-          }
         }
         
           stage('Create Docker images') {
             container(name: 'kaniko', shell: '/busybox/sh') {
               withEnv(['PATH+EXTRA=/busybox:/kaniko']) {
                 sh """#!/busybox/sh
+                curl -O https://download.newrelic.com/newrelic/java-agent/newrelic-agent/current/newrelic-java.zip
+                jar -xvf newrelic-java.zip
+                cp newrelic/newrelic.jar ./newrelic.jar
+                rm -rf newrelic newrelic-java.zip
                 /kaniko/executor -f `pwd`/Dockerfile -c `pwd` --destination=vilvamani007/test:${IMAGE_VERSION}
                 """
               }

@@ -72,8 +72,8 @@ podTemplate(label: label, containers: [
           container('sonarqube') {
             withSonarQubeEnv('SonarQube') {
               sh '''
-              sonar-scanner -Dsonar.projectBaseDir=${WORKSPACE} -Dsonar.projectKey=${env.JOB_NAME} -Dsonar.login="${SONARQUBE_API_TOKEN}"
-            '''
+              sonar-scanner -Dsonar.projectBaseDir=${WORKSPACE} -Dsonar.projectKey=${JOB_NAME} -Dsonar.login="${SONARQUBE_API_TOKEN}"
+              '''
             }
           }
         }

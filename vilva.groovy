@@ -3,8 +3,6 @@ import org.jenkinsci.plugins.workflow.steps.FlowInterruptedException
 
 def label = "slave-${UUID.randomUUID().toString()}"
 def IMAGE_VERSION
-def buildStatus = 'STARTED'
-def slackChannel = 'infra-development'
 
 def getGitCredentials() {
   def co = checkout(scm)
@@ -13,32 +11,19 @@ def getGitCredentials() {
 }
 
 
-def notifyBuild(String buildStatus = 'STARTED') {
-  // build status of null means successful
-  buildStatus =  buildStatus ?: 'SUCCESSFUL'
-
-  // Default values
-  def colorName = 'RED'
-  def colorCode = '#FF0000'
-  def subject = "${buildStatus}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'"
-  def summary = "${subject} (${env.BUILD_URL})"
-  def details = """<p>STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':</p>
-    <p>Check console output at &QUOT;<a href='${env.BUILD_URL}'>${env.JOB_NAME} [${env.BUILD_NUMBER}]</a>&QUOT;</p>"""
-
-  // Override default values based on build status
-  if (buildStatus == 'STARTED') {
-    color = 'YELLOW'
-    colorCode = '#FFFF00'
-  } else if (buildStatus == 'SUCCESSFUL') {
-    color = 'GREEN'
-    colorCode = '#00FF00'
-  } else {
-    color = 'RED'
-    colorCode = '#FF0000'
+def slackNotifier(String buildResult) {
+  if ( buildResult == "SUCCESS" ) {
+    slackSend color: "good", message: "Job: ${env.JOB_NAME} with buildnumber ${env.BUILD_NUMBER} was successful"
   }
-
-  // Send notifications
-  slackSend (color: colorCode, message: summary)
+  else if( buildResult == "FAILURE" ) { 
+    slackSend color: "danger", message: "Job: ${env.JOB_NAME} with buildnumber ${env.BUILD_NUMBER} was failed"
+  }
+  else if( buildResult == "UNSTABLE" ) { 
+    slackSend color: "warning", message: "Job: ${env.JOB_NAME} with buildnumber ${env.BUILD_NUMBER} was unstable"
+  }
+  else {
+    slackSend color: "danger", message: "Job: ${env.JOB_NAME} with buildnumber ${env.BUILD_NUMBER} its resulat was unclear"	
+  }
 }
 
 
@@ -65,7 +50,7 @@ podTemplate(label: label, containers: [
           disableConcurrentBuilds(),
         ])
 
-        notifyBuild(buildStatus)
+        notifyBuild('STARTED')
 
         container('maven') {
           stage('Git Checkout') {
@@ -125,21 +110,22 @@ podTemplate(label: label, containers: [
             sh "kubectl apply -f https://raw.githubusercontent.com/vilvamani/spring-boot-swagger2/master/nginx.yaml"
           }
         }
-
-        buildStatus == 'SUCCESSFUL'
       }
     } 
     catch (FlowInterruptedException interruptEx) {
       echo "Job was cancelled"
-      buildStatus == 'FAILED'
       throw interruptEx
     }
     catch (failure) {
-      buildStatus == 'FAILED'
       throw failure
     }
-    finally {
-      notifyBuild(buildStatus)
+    finally{
+            post {
+        always {
+	    /* Use slackNotifier.groovy from shared library and provide current build result as parameter */   
+            slackNotifier(currentBuild.currentResult)
+            cleanWs()
+        }
     }
   }
 }

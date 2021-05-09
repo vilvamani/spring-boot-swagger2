@@ -65,6 +65,10 @@ podTemplate(label: label, containers: [
 
           stage("Maven Build") {
               sh "mvn install -DskipTests"
+              sh '''
+                curl -O https://download.newrelic.com/newrelic/java-agent/newrelic-agent/current/newrelic-java.zip
+                jar -xvf newrelic-java.zip
+              '''
           }
         }
 
@@ -82,8 +86,6 @@ podTemplate(label: label, containers: [
             container(name: 'kaniko', shell: '/busybox/sh') {
               withEnv(['PATH+EXTRA=/busybox:/kaniko']) {
                 sh """#!/busybox/sh
-                curl -O https://download.newrelic.com/newrelic/java-agent/newrelic-agent/current/newrelic-java.zip
-                jar -xvf newrelic-java.zip
                 cp newrelic/newrelic.jar ./newrelic.jar
                 rm -rf newrelic newrelic-java.zip
                 /kaniko/executor -f `pwd`/Dockerfile -c `pwd` --destination=vilvamani007/test:${IMAGE_VERSION}

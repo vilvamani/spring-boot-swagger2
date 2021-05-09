@@ -17,6 +17,7 @@ podTemplate(label: label, containers: [
     containerTemplate(name: 'awscli', image: 'amazon/aws-cli:2.2.3', command: 'cat', ttyEnabled: true, runAsGroup: '1000', runAsUser: '1000'),
     containerTemplate(name: 'sonarqube', image: 'sonarsource/sonar-scanner-cli:4.6', command: 'cat', ttyEnabled: true, runAsGroup: '1000', runAsUser: '1000'),
     containerTemplate(name: 'maven', image: 'vilvamani007/k8s-docker-slave:maven1', command: 'cat', ttyEnabled: true, runAsGroup: '1000', runAsUser: '1000'),
+    containerTemplate(name: 'node', image: 'vilvamani007/k8s-docker-slave:node', command: 'cat', ttyEnabled: true, runAsGroup: '1000', runAsUser: '1000'),
     containerTemplate(name: 'kaniko', image: 'gcr.io/kaniko-project/executor:debug', command: '/busybox/cat', ttyEnabled: true, privileged: true, runAsGroup: '0', runAsUser: '0'),
   ],
   volumes: [
@@ -31,44 +32,37 @@ podTemplate(label: label, containers: [
     try {
       node(label) {
         properties([
-            disableConcurrentBuilds(),
-            parameters([booleanParam(defaultValue: false, description: 'Whether or not to wait for canary deployment + check', name: 'skipCanary')])
+          disableConcurrentBuilds(),
+          parameters([booleanParam(defaultValue: false, description: 'Whether or not to wait for canary deployment + check', name: 'skipCanary')])
         ])
 
         container('maven') {
           stage('Git Checkout') {
-              getGitCredentials()
-              IMAGE_VERSION = "${GIT_COMMIT}-${BRANCH_NAME}-${BUILD_NUMBER}"
+            getGitCredentials()
+            IMAGE_VERSION = "${GIT_COMMIT}-${BRANCH_NAME}-${BUILD_NUMBER}"
           }
 
           stage("Read Author") {
-              git_commit = sh label: 'get last commit',
-                  returnStdout: true,
-                  script: 'git rev-parse --short HEAD~0'
-              author_email = sh label: 'get last commit',
-                  returnStdout: true,
-                  script: 'git log -1 --pretty=format:"%ae"'
+            git_commit = sh label: 'get last commit', returnStdout: true, script: 'git rev-parse --short HEAD~0'
+            author_email = sh label: 'get last commit', returnStdout: true, script: 'git log -1 --pretty=format:"%ae"'
           }
 
           stage("UnitTest") {
-              sh 'mvn clean test -U'
+            sh 'mvn clean test -U'
           }
 
           stage("Publish Report"){
-              junit(
-                  allowEmptyResults: true,
-                  testResults: '**/target/surefire-reports/*.xml,' +
-                          '**/target/failsafe-reports/*.xml'
-              )
-              jacoco()
+            junit(allowEmptyResults: true, testResults: '**/target/surefire-reports/*.xml,' + '**/target/failsafe-reports/*.xml')
+            jacoco()
           }
 
           stage("Maven Build") {
-              sh "mvn install -DskipTests"
-              sh '''
-                curl -O https://download.newrelic.com/newrelic/java-agent/newrelic-agent/current/newrelic-java.zip
-                jar -xvf newrelic-java.zip
-              '''
+            sh "mvn install -DskipTests"
+            sh '''
+              echo Download newRelicc jar
+              curl -O https://download.newrelic.com/newrelic/java-agent/newrelic-agent/current/newrelic-java.zip
+              jar -xvf newrelic-java.zip
+            '''
           }
         }
 
@@ -76,29 +70,31 @@ podTemplate(label: label, containers: [
           stage('SonarQube') {
             withSonarQubeEnv('SonarQube') {
               sh '''
-              sonar-scanner -Dsonar.projectBaseDir=${WORKSPACE} -Dsonar.projectKey=springboot-api -Dsonar.login="${SONARQUBE_API_TOKEN}" -Dsonar.java.binaries=target/classes -Dsonar.sources=src/main/java/ -Dsonar.language=java
+                sonar-scanner -Dsonar.projectBaseDir=${WORKSPACE} -Dsonar.projectKey=springboot-api -Dsonar.login="${SONARQUBE_API_TOKEN}" -Dsonar.java.binaries=target/classes -Dsonar.sources=src/main/java/ -Dsonar.language=java
               '''
             }
           }
         }
         
-          stage('Create Docker images') {
-            container(name: 'kaniko', shell: '/busybox/sh') {
-              withEnv(['PATH+EXTRA=/busybox:/kaniko']) {
-                sh """#!/busybox/sh
-                cp newrelic/newrelic.jar ./newrelic.jar
-                rm -rf newrelic newrelic-java.zip
-                /kaniko/executor -f `pwd`/Dockerfile -c `pwd` --destination=vilvamani007/test:${IMAGE_VERSION}
-                """
-              }
+        stage('Create Docker images') {
+          container(name: 'kaniko', shell: '/busybox/sh') {
+            withEnv(['PATH+EXTRA=/busybox:/kaniko']) {
+            sh '''
+              #!/busybox/sh
+              cp newrelic/newrelic.jar ./newrelic.jar
+              rm -rf newrelic newrelic-java.zip
+              /kaniko/executor -f `pwd`/Dockerfile -c `pwd` --destination=vilvamani007/test:${IMAGE_VERSION}
+            '''
             }
           }
+        }
       }
-
-    } catch (FlowInterruptedException interruptEx) {
+    } 
+    catch (FlowInterruptedException interruptEx) {
       echo "Job was cancelled"
       throw interruptEx
-    } catch (failure) {
+    }
+    catch (failure) {
       throw failure
     }
   }

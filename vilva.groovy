@@ -72,7 +72,7 @@ podTemplate(label: label, containers: [
           container('sonarqube') {
             withSonarQubeEnv('SonarQube') {
               sh '''
-              sonar-scanner -Dsonar.projectBaseDir=${WORKSPACE} -Dsonar.projectKey=${JOB_NAME} -Dsonar.login="${SONARQUBE_API_TOKEN}" -Dsonar.java.binaries=target/classes -Dsonar.sources=src/main/java/ -Dsonar.language=java
+              sonar-scanner -Dsonar.projectBaseDir=${WORKSPACE} -Dsonar.projectKey=springboot-api -Dsonar.login="${SONARQUBE_API_TOKEN}" -Dsonar.java.binaries=target/classes -Dsonar.sources=src/main/java/ -Dsonar.language=java
               '''
             }
           }

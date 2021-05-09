@@ -117,9 +117,8 @@ podTemplate(label: label, containers: [
       throw failure
     }
     finally{
-	    /* Use slackNotifier.groovy from shared library and provide current build result as parameter */   
+	/* Use slackNotifier.groovy from shared library and provide current build result as parameter */   
         slackNotifier(currentBuild.currentResult)
-        cleanWs()
     }
   }
 }

@@ -68,13 +68,18 @@ podTemplate(label: label, containers: [
           }
         }
 
-        stage('SonarQube') {
-          container('sonarqube') {
+        container('sonarqube') {
+          stage('SonarQube') {
             withSonarQubeEnv('SonarQube') {
               sh '''
               sonar-scanner -Dsonar.projectBaseDir=${WORKSPACE} -Dsonar.projectKey=springboot-api -Dsonar.login="${SONARQUBE_API_TOKEN}" -Dsonar.java.binaries=target/classes -Dsonar.sources=src/main/java/ -Dsonar.language=java
               '''
             }
+          }
+          
+          stage("OWASP Dependancy Check"){
+            dependencyCheck additionalArguments: '', odcInstallation: 'owasp'
+            dependencyCheckPublisher pattern: 'dependency-check-report.xml'
           }
         }
         
@@ -82,7 +87,6 @@ podTemplate(label: label, containers: [
             container(name: 'kaniko', shell: '/busybox/sh') {
               withEnv(['PATH+EXTRA=/busybox:/kaniko']) {
                 sh """#!/busybox/sh
-                ls -l
                 /kaniko/executor -f `pwd`/Dockerfile -c `pwd` --destination=vilvamani007/test:${IMAGE_VERSION}
                 """
               }

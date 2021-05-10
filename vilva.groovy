@@ -37,6 +37,7 @@ podTemplate(label: label, containers: [
     containerTemplate(name: 'maven', image: 'algoshack/k8s-docker-slave:maven', command: 'cat', ttyEnabled: true, runAsGroup: '1000', runAsUser: '1000'),
     containerTemplate(name: 'kaniko', image: 'gcr.io/kaniko-project/executor:debug', command: '/busybox/cat', ttyEnabled: true, privileged: true, runAsGroup: '0', runAsUser: '0'),
     containerTemplate(name: 'kubectl', image: 'bitnami/kubectl', command: 'cat', ttyEnabled: true, runAsGroup: '1000', runAsUser: '1000'),
+    containerTemplate(name: 'rubyimage', image: 'centos/ruby-25-centos7:latest', command: 'cat', ttyEnabled: true)
   ],
   volumes: [
     configMapVolume(configMapName: 'docker-config', mountPath: '/kaniko/.docker/'),

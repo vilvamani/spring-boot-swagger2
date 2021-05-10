@@ -56,15 +56,13 @@ podTemplate(label: label, containers: [
             getGitCredentials()
             IMAGE_VERSION = "${GIT_COMMIT}-${BRANCH_NAME}-${BUILD_NUMBER}"
             container('rubyimage') {
-                withCredentials([usernamePassword(credentialsId: 'github-user-pass', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
                     sh """
                     ls -ltra
-                    git config  user.name ${GIT_USERNAME}
+                    git config  user.name git
                     git config  user.email translated-reviews@bazaarvoice.com
                     git tag -a ${IMAGE_VERSION} -m \"${IMAGE_VERSION}\"
                     git push --tags
                     """
-                }
             }
           }
         currentBuild.result = 'SUCCESS'

@@ -6,7 +6,6 @@ def IMAGE_VERSION = ''
 
 def getGitCredentials() {
   def co = checkout(scm)
-  sh 'git config --local credential.helper "!p() { echo username=\\$GIT_USERNAME; echo password=\\$GIT_PASSWORD; }; p"'
   GIT_COMMIT = co.GIT_COMMIT
 }
 
@@ -55,15 +54,7 @@ podTemplate(label: label, containers: [
           stage('Create automated release notes') {
             getGitCredentials()
             IMAGE_VERSION = "${GIT_COMMIT}-${BRANCH_NAME}-${BUILD_NUMBER}"
-            container('rubyimage') {
-                    sh """
-                    ls -ltra
-                    git config  user.name git
-                    git config  user.email translated-reviews@bazaarvoice.com
-                    git tag -a ${IMAGE_VERSION} -m \"${IMAGE_VERSION}\"
-                    git push --tags
-                    """
-            }
+            sh "ls -ltra"
           }
         currentBuild.result = 'SUCCESS'
       }

@@ -62,6 +62,7 @@ podTemplate(label: label, containers: [
                     git config --global user.email translated-reviews@bazaarvoice.com
                     git tag -a ${IMAGE_VERSION} -m \"${IMAGE_VERSION}\"
                     git push --tags
+                    """
                 }
             }
           }

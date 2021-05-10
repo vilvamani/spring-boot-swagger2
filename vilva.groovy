@@ -2,7 +2,7 @@
 import org.jenkinsci.plugins.workflow.steps.FlowInterruptedException
 
 def label = "slave-${UUID.randomUUID().toString()}"
-def IMAGE_VERSION
+def IMAGE_VERSION = ''
 
 def getGitCredentials() {
   def co = checkout(scm)
@@ -12,17 +12,20 @@ def getGitCredentials() {
 
 
 def slackNotifier(String buildResult) {
+	
+  currentBuild.displayName = "#" + (currentBuild.number + ' - ' + buildResult)
+	
   if ( buildResult == "SUCCESS" ) {
-    slackSend color: "good", message: "Job: ${env.JOB_NAME} with buildnumber ${env.BUILD_NUMBER} was successful"
+    slackSend color: "good", message: "Deployment of ${env.JOB_NAME} with buildnumber ${env.BUILD_NUMBER} : <${BUILD_URL}|Successfull>"
   }
   else if( buildResult == "FAILURE" ) { 
-    slackSend color: "danger", message: "Job: ${env.JOB_NAME} with buildnumber ${env.BUILD_NUMBER} was failed"
+    slackSend color: "danger", message: "Deployment of ${env.JOB_NAME} with buildnumber ${env.BUILD_NUMBER} : <${BUILD_URL}|Failed>"
   }
   else if( buildResult == "UNSTABLE" ) { 
-    slackSend color: "warning", message: "Job: ${env.JOB_NAME} with buildnumber ${env.BUILD_NUMBER} was unstable"
+    slackSend color: "warning", message: "Deployment of ${env.JOB_NAME} with buildnumber ${env.BUILD_NUMBER} : <${BUILD_URL}|Unstable"
   }
   else {
-    slackSend color: "danger", message: "Job: ${env.JOB_NAME} with buildnumber ${env.BUILD_NUMBER} its resulat was unclear"	
+    slackSend color: "danger", message: "Deployment of ${env.JOB_NAME} with buildnumber ${env.BUILD_NUMBER} : <${BUILD_URL}|Unclear"	
   }
 }
 
@@ -31,7 +34,7 @@ podTemplate(label: label, containers: [
     containerTemplate(name: 'jnlp', image: 'jenkins/jnlp-slave:4.7-1-alpine', args: '${computer.jnlpmac} ${computer.name}', runAsGroup: '1000', runAsUser: '1000'),
     containerTemplate(name: 'awscli', image: 'amazon/aws-cli:2.2.3', command: 'cat', ttyEnabled: true, runAsGroup: '1000', runAsUser: '1000'),
     containerTemplate(name: 'sonarqube', image: 'sonarsource/sonar-scanner-cli:4.6', command: 'cat', ttyEnabled: true, runAsGroup: '1000', runAsUser: '1000'),
-    containerTemplate(name: 'maven', image: 'vilvamani007/k8s-docker-slave:maven1', command: 'cat', ttyEnabled: true, runAsGroup: '1000', runAsUser: '1000'),
+    containerTemplate(name: 'maven', image: 'algoshack/k8s-docker-slave:maven', command: 'cat', ttyEnabled: true, runAsGroup: '1000', runAsUser: '1000'),
     containerTemplate(name: 'kaniko', image: 'gcr.io/kaniko-project/executor:debug', command: '/busybox/cat', ttyEnabled: true, privileged: true, runAsGroup: '0', runAsUser: '0'),
     containerTemplate(name: 'kubectl', image: 'bitnami/kubectl', command: 'cat', ttyEnabled: true, runAsGroup: '1000', runAsUser: '1000'),
   ],
@@ -53,73 +56,34 @@ podTemplate(label: label, containers: [
           stage('Git Checkout') {
             getGitCredentials()
             IMAGE_VERSION = "${GIT_COMMIT}-${BRANCH_NAME}-${BUILD_NUMBER}"
-          }
-
-          stage("Read Author") {
-            git_commit = sh label: 'get last commit', returnStdout: true, script: 'git rev-parse --short HEAD~0'
-            author_email = sh label: 'get last commit', returnStdout: true, script: 'git log -1 --pretty=format:"%ae"'
-          }
-
-          stage("UnitTest") {
-            sh 'mvn clean test -U'
-          }
-
-          stage("Publish Report"){
-            junit(allowEmptyResults: true, testResults: '**/target/surefire-reports/*.xml,' + '**/target/failsafe-reports/*.xml')
-            jacoco()
-          }
-
-          stage("Maven Build") {
-            sh "mvn install -DskipTests"
-            sh '''
-              echo Download newRelicc jar
-              curl -O https://download.newrelic.com/newrelic/java-agent/newrelic-agent/current/newrelic-java.zip
-              jar -xvf newrelic-java.zip
-            '''
-          }
-        }
-
-        container('sonarqube') {
-          stage('SonarQube') {
-            withSonarQubeEnv('SonarQube') {
-              sh '''
-                sonar-scanner -Dsonar.projectBaseDir=${WORKSPACE} -Dsonar.projectKey=springboot-api -Dsonar.login="${SONARQUBE_API_TOKEN}" -Dsonar.java.binaries=target/classes -Dsonar.sources=src/main/java/ -Dsonar.language=java
-              '''
+            container('rubyimage') {
+                withCredentials([usernamePassword(credentialsId: 'github-user-pass', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+                    sh """git config --global user.name ${GIT_USERNAME}
+                    git config --global user.email translated-reviews@bazaarvoice.com
+                    git tag -a ${IMAGE_VERSION} -m \"${IMAGE_VERSION}\"
+                    git push --tags
+                }
             }
           }
-        }
+
         
-        stage('Create Docker images') {
-          container(name: 'kaniko', shell: '/busybox/sh') {
-            withEnv(['PATH+EXTRA=/busybox:/kaniko']) {
-            sh '''
-              #!/busybox/sh
-              cp newrelic/newrelic.jar ./newrelic.jar
-              rm -rf newrelic newrelic-java.zip
-              /kaniko/executor -f `pwd`/Dockerfile -c `pwd` --destination=vilvamani007/test:${IMAGE_VERSION}
-            '''
-            }
-          }
         }
 
-        stage("Kubernetes") {
-          container('kubectl') {
-            sh "kubectl apply -f https://raw.githubusercontent.com/vilvamani/spring-boot-swagger2/master/nginx.yaml"
-          }
-        }
+
+        currentBuild.result = 'SUCCESS'
       }
     } 
     catch (FlowInterruptedException interruptEx) {
       echo "Job was cancelled"
+      currentBuild.result = 'FAILURE'
       throw interruptEx
     }
-    catch (failure) {
-      throw failure
+    catch (Exception err) {
+      currentBuild.result = 'FAILURE'
     }
     finally{
-	/* Use slackNotifier.groovy from shared library and provide current build result as parameter */
-	    print(currentBuild.currentResult)
-        slackNotifier(currentBuild.currentResult)
+	  /* Use slackNotifier.groovy from shared library and provide current build result as parameter */
+      slackNotifier(currentBuild.result)
     }
   }
 }

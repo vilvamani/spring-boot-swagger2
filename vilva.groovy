@@ -37,7 +37,6 @@ podTemplate(label: label, containers: [
     containerTemplate(name: 'maven', image: 'algoshack/k8s-docker-slave:maven', command: 'cat', ttyEnabled: true, runAsGroup: '1000', runAsUser: '1000'),
     containerTemplate(name: 'kaniko', image: 'gcr.io/kaniko-project/executor:debug', command: '/busybox/cat', ttyEnabled: true, privileged: true, runAsGroup: '0', runAsUser: '0'),
     containerTemplate(name: 'kubectl', image: 'bitnami/kubectl', command: 'cat', ttyEnabled: true, runAsGroup: '1000', runAsUser: '1000'),
-    containerTemplate(name: 'rubyimage', image: 'centos/ruby-25-centos7:latest', command: 'cat', ttyEnabled: true)
   ],
   volumes: [
     configMapVolume(configMapName: 'docker-config', mountPath: '/kaniko/.docker/'),
@@ -53,25 +52,19 @@ podTemplate(label: label, containers: [
         properties([
           disableConcurrentBuilds(),
         ])
-        container('maven') {
-          stage('Git Checkout') {
+          stage('Create automated release notes') {
             getGitCredentials()
             IMAGE_VERSION = "${GIT_COMMIT}-${BRANCH_NAME}-${BUILD_NUMBER}"
             container('rubyimage') {
                 withCredentials([usernamePassword(credentialsId: 'github-user-pass', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
-                    sh """git config user.name ${GIT_USERNAME}
-                    git config user.email translated-reviews@bazaarvoice.com
+                    sh """git config  user.name ${GIT_USERNAME}
+                    git config  user.email translated-reviews@bazaarvoice.com
                     git tag -a ${IMAGE_VERSION} -m \"${IMAGE_VERSION}\"
                     git push --tags
                     """
                 }
             }
           }
-
-        
-        }
-
-
         currentBuild.result = 'SUCCESS'
       }
     } 

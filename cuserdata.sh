@@ -9,10 +9,6 @@ do
       resource_group="$1"
       shift
       ;;
-    --aks_name|-an)
-      aks_name="$1"
-      shift
-      ;;
     --boomi_auth)
       boomi_auth="$1"
       shift
@@ -31,14 +27,6 @@ do
       ;;
     --boomi_account)
       boomi_account="$1"
-      shift
-      ;;
-    --fileshare)
-      fileshare="$1"
-      shift
-      ;;
-    --netAppIP)
-      netAppIP="$1"
       shift
       ;;
     --help|-help|-h)
@@ -62,7 +50,7 @@ chmod -R 777 ./molecule_install64.sh
 
 if [ $boomi_auth == "token" ]
 then
- ./molecule_install64.sh -q -console -Vusername=$boomi_username -Vtoken=$boomi_token  -VatomName=azureMolecule -VaccountId=$oomi_account -VlocalPath=/tmp/local -VlocalTempPath=/home/centos/temp -dir /home/centos/molecule
+ ./molecule_install64.sh -q -console -Vusername=$boomi_username -VinstallToken=$boomi_token  -VatomName=azureMolecule -VaccountId=$oomi_account -VlocalPath=/tmp/local -VlocalTempPath=/home/centos/temp -dir /home/centos/molecule
  else:
  ./molecule_install64.sh -q -console -Vusername=$boomi_username -Vpassword=$boomi_password  -VatomName=azureMolecule -VaccountId=$boomi_account -VlocalPath=/tmp/local -VlocalTempPath=/home/centos/temp -dir /home/centos/molecule
  fi

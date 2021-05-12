@@ -51,8 +51,10 @@ chmod -R 777 ./molecule_install64.sh
 if [ $boomi_auth == "token" ]
 then
   echo "************token**************"
+ ls -l
  ./molecule_install64.sh -q -console -Vusername=$boomi_username -VinstallToken=$boomi_token  -VatomName=azureMolecule -VaccountId=$oomi_account -VlocalPath=/tmp/local -VlocalTempPath=/home/centos/temp -dir /home/centos/molecule
- else:
+ else
  echo "************password**************"
+ ls -l
  ./molecule_install64.sh -q -console -Vusername=$boomi_username -Vpassword=$boomi_password  -VatomName=azureMolecule -VaccountId=$boomi_account -VlocalPath=/tmp/local -VlocalTempPath=/home/centos/temp -dir /home/centos/molecule
  fi

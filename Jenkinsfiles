@@ -61,13 +61,10 @@ podTemplate(label: label, containers: [
 
             withCredentials([usernamePassword(credentialsId: 'github-token', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
                 creds = "${GIT_USERNAME}"
-                sh """
-                set +x
-                echo ${creds}
-                """
             }
 
             sh """
+	    git branch
             git config --local user.email translated-reviews@bazaarvoice.com
             git config --local user.name '${creds}'
             git tag -a test -m test

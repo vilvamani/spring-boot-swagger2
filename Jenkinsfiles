@@ -56,7 +56,7 @@ podTemplate(label: label, containers: [
             getGitCredentials()
             sh "ls -l"
             print("============2================")
-            sh "git config --local --unset credential.helper"
+            //sh "git config --local --unset credential.helper"
             sh "git config --list"
 
             withCredentials([usernamePassword(credentialsId: 'github-token', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {

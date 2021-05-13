@@ -7,7 +7,6 @@ def IMAGE_VERSION = ''
 def getGitCredentials() {
   checkout scm
   print("============1================")
-  sh "ls -l"
   IMAGE_VERSION = sh(label: 'get last commit', returnStdout: true, script: 'git rev-parse --short HEAD~0')
 }
 
@@ -57,14 +56,12 @@ podTemplate(label: label, containers: [
             sh "ls -la"
             print("============2================")
             //sh "git config --local --unset credential.helper"
-            sh "git config --list"
-		    sh "git config user.email vilva@gmail.com"
-                   // sh "git config user.name vilva"
 		    sh "git tag -a test -m test"
 
             withCredentials([usernamePassword(credentialsId: 'github-token', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'Username')]) {
                 sh """git config --global user.name ${GIT_USERNAME}
                 git config --global user.email translated-reviews@bazaarvoice.com
+		git config --list
                 git push --tags
                 """
             }

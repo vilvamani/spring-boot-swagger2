@@ -63,7 +63,7 @@ podTemplate(label: label, containers: [
 		git config --global user.name vilvamani
 		git config --list
 		git tag -a test -m test
-                git push --tags
+                git push
                 '''
             } 
           }

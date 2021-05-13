@@ -50,10 +50,8 @@ podTemplate(label: label, containers: [
           disableConcurrentBuilds(),
         ])
           stage('Git Checkout') {
-            cleanWs()  
-            sh "git clone https://github.com/vilvamani/spring-boot-swagger2.git"
+            git credentialsId: 'github-token', url: 'https://github.com/vilvamani/spring-boot-swagger2.git'
             container('rubyimage') {
-		    dir("spring-boot-swagger2") {
             sh "ls -la"
             print("============2================")
             //sh "git config --local --unset credential.helper"
@@ -67,11 +65,8 @@ podTemplate(label: label, containers: [
 		git tag -a test -m test
                 git push --tags
                 '''
-            }
-            
+            } 
           }
-	    }
-
         }
 
         currentBuild.result = 'SUCCESS'

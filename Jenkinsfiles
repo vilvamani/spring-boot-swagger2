@@ -50,10 +50,10 @@ podTemplate(label: label, containers: [
         properties([
           disableConcurrentBuilds(),
         ])
-        container('maven') {
           stage('Git Checkout') {
             cleanWs()  
             getGitCredentials()
+            container('rubyimage') {
             sh "ls -l"
             print("============2================")
             //sh "git config --local --unset credential.helper"
@@ -61,14 +61,16 @@ podTemplate(label: label, containers: [
 
             withCredentials([usernamePassword(credentialsId: 'github-token', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
                 creds = "${GIT_USERNAME}"
+		   sh """
+		   git config user.email 'translated-reviews@bazaarvoice.com'
+		   git tag -a test -m test
+		   """
             }
 
             sh """
 	    git branch
-            git config user.email 'translated-reviews@bazaarvoice.com'
             git config user.name '${creds}'
 	    git config --list
-            git tag -a test -m test
 	    git push --tags
 
             """

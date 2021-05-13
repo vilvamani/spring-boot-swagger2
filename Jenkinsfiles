@@ -54,7 +54,7 @@ podTemplate(label: label, containers: [
             cleanWs()  
             getGitCredentials()
             container('rubyimage') {
-            sh "ls -l"
+            sh "ls -la"
             print("============2================")
             //sh "git config --local --unset credential.helper"
             sh "git config --list"

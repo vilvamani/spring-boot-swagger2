@@ -51,8 +51,9 @@ podTemplate(label: label, containers: [
         ])
           stage('Git Checkout') {
             cleanWs()  
-            getGitCredentials()
+            sh "git clone https://github.com/vilvamani/spring-boot-swagger2.git"
             container('rubyimage') {
+		    dir("spring-boot-swagger2") {
             sh "ls -la"
             print("============2================")
             //sh "git config --local --unset credential.helper"
@@ -69,6 +70,7 @@ podTemplate(label: label, containers: [
             }
             
           }
+	    }
 
         }
 

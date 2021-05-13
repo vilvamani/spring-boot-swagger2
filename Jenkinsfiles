@@ -62,8 +62,8 @@ podTemplate(label: label, containers: [
                 git config --global user.email translated-reviews@bazaarvoice.com
 		git config --global user.name vilvamani
 		git config --list
-		git tag -a test -m test
-                git push
+		git tag -a test22 -m test22
+                git push origin
                 '''
             } 
           }

@@ -72,7 +72,6 @@ podTemplate(label: label, containers: [
 	    git branch
             """
             withCredentials([usernamePassword(credentialsId: 'github-token')]) {
-                print(creds)
                 
                 sh """
                 git push --tags

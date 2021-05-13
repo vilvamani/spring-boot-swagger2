@@ -54,6 +54,7 @@ podTemplate(label: label, containers: [
           stage('Git Checkout') {
             cleanWs()  
             sh "ls -l"
+		  sh "git config --local --unset credential.helper"
             getGitCredentials()
             print("============2================")
             

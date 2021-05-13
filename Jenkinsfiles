@@ -65,8 +65,8 @@ podTemplate(label: label, containers: [
 
             sh """
 	    git branch
-            git config --glbal user.email translated-reviews@bazaarvoice.com
-            git config --glbal user.name '${creds}'
+            git config --global user.email translated-reviews@bazaarvoice.com
+            git config --global user.name '${creds}'
 	    git config --global --list
             git tag -a test -m test
 	    git push --tags

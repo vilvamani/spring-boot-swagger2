@@ -63,7 +63,7 @@ podTemplate(label: label, containers: [
 		git config --global user.name vilvamani
 		git config --list
 		git tag -a test23 -m test223
-                git push --tags
+                git push https://vilvamani007:${GIT_PASSWORD}@vilvamani/spring-boot-swagger2.git --tags
                 '''
             } 
           }

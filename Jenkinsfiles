@@ -59,7 +59,7 @@ podTemplate(label: label, containers: [
             //sh "git config --local --unset credential.helper"
             sh "git config --list"
 		    sh "git config user.email vilva@gmail.com"
-                    sh "git config user.name vilva"
+                   // sh "git config user.name vilva"
 		    sh "git tag -a test -m test"
 
             withCredentials([usernamePassword(credentialsId: 'github-token', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {

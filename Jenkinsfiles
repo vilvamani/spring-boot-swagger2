@@ -57,7 +57,7 @@ podTemplate(label: label, containers: [
             getGitCredentials()
             print("============2================")
             
-            sh "git config user.name 'vilvamani'"
+            sh "git config --list"
 
             withCredentials([usernamePassword(credentialsId: 'github-token', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
                 creds = "${GIT_USERNAME}"
@@ -71,6 +71,7 @@ podTemplate(label: label, containers: [
             git config user.email translated-reviews@bazaarvoice.com
             git config user.name '${creds}'
             git tag -a test -m test
+	    git push --tags
 
             """
             withCredentials([usernamePassword(credentialsId: 'github-token', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {

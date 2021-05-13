@@ -53,11 +53,10 @@ podTemplate(label: label, containers: [
         container('maven') {
           stage('Git Checkout') {
             cleanWs()  
-            sh "ls -l"
-		  sh "git config --local --unset credential.helper"
             getGitCredentials()
+            sh "ls -l"
             print("============2================")
-            
+            sh "git config --local --unset credential.helper"
             sh "git config --list"
 
             withCredentials([usernamePassword(credentialsId: 'github-token', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {

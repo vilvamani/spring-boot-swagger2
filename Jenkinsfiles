@@ -63,10 +63,8 @@ podTemplate(label: label, containers: [
 		    sh "git tag -a test -m test"
 
             withCredentials([usernamePassword(credentialsId: 'github-token', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'Username')]) {
-                
-                sh """
-		echo ${GIT_PASSWORD}
-		echo ${Username}
+                sh """git config --global user.name ${GIT_USERNAME}
+                git config --global user.email translated-reviews@bazaarvoice.com
                 git push --tags
                 """
             }

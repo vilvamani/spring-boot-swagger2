@@ -69,7 +69,7 @@ podTemplate(label: label, containers: [
 
             sh """
             git config user.email translated-reviews@bazaarvoice.com
-            git config user.name 'git'
+            git config user.name '${creds}'
             git tag -a test -m test
 
             """

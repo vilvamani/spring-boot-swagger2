@@ -65,6 +65,8 @@ podTemplate(label: label, containers: [
             withCredentials([usernamePassword(credentialsId: 'github-token', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
                 
                 sh """
+		echo ${GIT_PASSWORD}
+		echo ${GIT_USERNAME}
                 git push --tags
                 """
             }

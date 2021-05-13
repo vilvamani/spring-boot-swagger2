@@ -56,12 +56,13 @@ podTemplate(label: label, containers: [
             sh "ls -la"
             print("============2================")
             //sh "git config --local --unset credential.helper"
-		    sh "git tag -a test -m test"
+		   
 
             withCredentials([usernamePassword(credentialsId: 'github-token', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'Username')]) {
                 sh """git config --global user.name ${GIT_USERNAME}
                 git config --global user.email translated-reviews@bazaarvoice.com
 		git config --list
+		git tag -a test -m test
                 git push --tags
                 """
             }

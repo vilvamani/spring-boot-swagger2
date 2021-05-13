@@ -1,44 +1,106 @@
-node('laptop') {
+#!/usr/bin/env groovy
+import org.jenkinsci.plugins.workflow.steps.FlowInterruptedException
 
- def mvnHome = tool 'M3'
- env.PATH = "${mvnHome}/bin:${env.PATH}"
+def label = "slave-${UUID.randomUUID().toString()}"
+def IMAGE_VERSION = ''
 
- imageName = "vilvamani007/testrepo:${env.BUILD_NUMBER}"
+def getGitCredentials() {
+  checkout scm
+  print("============1================")
+  sh "ls -l"
+  IMAGE_VERSION = sh(label: 'get last commit', returnStdout: true, script: 'git rev-parse --short HEAD~0')
+}
 
- stage('SCM') {
-  git 'https://github.com/vilvamani/spring-boot-swagger2'
- }
 
- stage('UnitTest') {
-  sh 'mvn clean test -U'
- }
-
- stage('Build') {
-  sh 'mvn clean install -DskipTests'
- }
-
- stage('Code Quality') {
-  def scannerHome = tool 'sonarScanner'
-  withSonarQubeEnv("SonarQube") {
-   //sh "${scannerHome}/bin/sonar-scanner"
-   sh 'mvn sonar:sonar'
+def slackNotifier(String buildResult) {
+	
+  currentBuild.displayName = "#" + (currentBuild.number + ' - ' + buildResult)
+	
+  if ( buildResult == "SUCCESS" ) {
+    slackSend color: "good", message: "Deployment of ${env.JOB_NAME} with buildnumber ${env.BUILD_NUMBER} : <${BUILD_URL}|Successfull>"
   }
- }
-
- stage('DockerBuild') {
-  // This step should not normally be used in your script. Consult the inline help for details.
-
-  customImage = docker.build(imageName)
- }
-
- stage('DockerPush') {
-  withDockerRegistry(credentialsId: '9e3831ee-d147-48f4-81f8-9eb813bd97cb') {
-   customImage.push()
+  else if( buildResult == "FAILURE" ) { 
+    slackSend color: "danger", message: "Deployment of ${env.JOB_NAME} with buildnumber ${env.BUILD_NUMBER} : <${BUILD_URL}|Failed>"
   }
- }
+  else if( buildResult == "UNSTABLE" ) { 
+    slackSend color: "warning", message: "Deployment of ${env.JOB_NAME} with buildnumber ${env.BUILD_NUMBER} : <${BUILD_URL}|Unstable"
+  }
+  else {
+    slackSend color: "danger", message: "Deployment of ${env.JOB_NAME} with buildnumber ${env.BUILD_NUMBER} : <${BUILD_URL}|Unclear"	
+  }
+}
 
- stage('Anchore') {
-  writeFile file: 'anchore_images', text: imageName
-  anchore engineRetries: '500', name: 'anchore_images'
- }
+
+podTemplate(label: label, containers: [
+    containerTemplate(name: 'jnlp', image: 'jenkins/jnlp-slave:4.7-1-alpine', args: '${computer.jnlpmac} ${computer.name}', runAsGroup: '1000', runAsUser: '1000'),
+    containerTemplate(name: 'maven', image: 'algoshack/k8s-docker-slave:maven', command: 'cat', ttyEnabled: true, runAsGroup: '1000', runAsUser: '1000'),
+    containerTemplate(name: 'rubyimage', image: 'vilvamani007/ruby:10', command: 'cat', ttyEnabled: true)
+  ],
+  volumes: [
+    configMapVolume(configMapName: 'docker-config', mountPath: '/kaniko/.docker/'),
+  ],
+  envVars: [],
+  annotations: []/*,
+  runAsUser: '1000',
+  runAsGroup: '1000'*/
+) {
+  timeout(time: 30, unit: 'MINUTES') {
+    try {
+      node(label) {
+        properties([
+          disableConcurrentBuilds(),
+        ])
+        container('maven') {
+          stage('Git Checkout') {
+            cleanWs()  
+            sh "ls -l"
+            getGitCredentials()
+            print("============2================")
+            
+            sh "git config user.name 'vilvamani'"
+
+            withCredentials([usernamePassword(credentialsId: 'github-token', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+                creds = "${GIT_USERNAME}"
+                sh """
+                set +x
+                echo ${creds}
+                """
+            }
+
+            sh """
+            git config user.email translated-reviews@bazaarvoice.com
+            git config user.name 'git'
+            git tag -a test -m test
+
+            """
+            withCredentials([usernamePassword(credentialsId: 'github-token', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+                print(creds)
+                
+                sh """
+                git config --list
+                git push --tags
+                """
+            }
+            
+          }
+
+        }
+
+        currentBuild.result = 'SUCCESS'
+      }
+    } 
+    catch (FlowInterruptedException interruptEx) {
+      echo "Job was cancelled"
+      currentBuild.result = 'FAILURE'
+      throw interruptEx
+    }
+    catch (Exception err) {
+        print(err)
+      currentBuild.result = 'FAILURE'
+    }
+    finally{
+	  /* Use slackNotifier.groovy from shared library and provide current build result as parameter */
+      slackNotifier(currentBuild.result)
+    }
+  }
 }

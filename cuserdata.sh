@@ -29,6 +29,14 @@ do
       boomi_account="$1"
       shift
       ;;
+    --fileshare)
+      fileshare="$1"
+      shift
+      ;;
+    --netAppIP)
+      netAppIP="$1"
+      shift
+      ;;
     --help|-help|-h)
       print_usage
       exit 13
@@ -45,6 +53,10 @@ set -x
 #cfn signaling functions
 yum install git wget -y || apt-get install -y git || zypper -n install git
 
+yum install -y nfs-utils
+
+mount -t nfs -o rw,hard,rsize=1048576,wsize=1048576,vers=4.1,tcp $netAppIP:/$fileshare ~/$fileshare -o dir_mode=0755,file_mode=0664
+
 wget https://platform.boomi.com/atom/molecule_install64.sh
 chmod -R 777 ./molecule_install64.sh
 
@@ -52,9 +64,9 @@ if [ $boomi_auth == "token" ]
 then
   echo "************token**************"
  ls -l
- ./molecule_install64.sh -q -console -Vusername=$boomi_username -VinstallToken=$boomi_token  -VatomName=azureMolecule -VaccountId=$oomi_account -VlocalPath=/tmp/local -VlocalTempPath=/home/centos/temp -dir /home/centos/molecule
+ ./molecule_install64.sh -q -console -Vusername=$boomi_username -VinstallToken=$boomi_token  -VatomName=azureMolecule -VaccountId=$oomi_account -VlocalPath=/tmp/local -VlocalTempPath=/home/centos/temp -dir ~/$fileshare
  else
  echo "************password**************"
  ls -l
- ./molecule_install64.sh -q -console -Vusername=$boomi_username -Vpassword=$boomi_password  -VatomName=azureMolecule -VaccountId=$boomi_account -VlocalPath=/tmp/local -VlocalTempPath=/home/centos/temp -dir /home/centos/molecule
+ ./molecule_install64.sh -q -console -Vusername=$boomi_username -Vpassword=$boomi_password  -VatomName=azureMolecule -VaccountId=$boomi_account -VlocalPath=/tmp/local -VlocalTempPath=/home/centos/temp -dir ~/$fileshare
  fi

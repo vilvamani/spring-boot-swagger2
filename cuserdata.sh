@@ -55,6 +55,8 @@ yum install git wget -y || apt-get install -y git || zypper -n install git
 
 yum install -y nfs-utils
 
+mkdir -p ~/$fileshare
+
 mount -t nfs -o rw,hard,rsize=1048576,wsize=1048576,vers=4.1,tcp $netAppIP:/$fileshare ~/$fileshare -o dir_mode=0755,file_mode=0664
 
 wget https://platform.boomi.com/atom/molecule_install64.sh

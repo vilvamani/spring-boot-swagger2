@@ -64,8 +64,6 @@ mkdir -p ${MoleculeSharedDir}/Molecule_${MoleculeClusterName}
 chown centos:centos ${MoleculeLocalPath} ${MoleculeLocalTemp}
 chown centos:centos ${MoleculeSharedDir}/Molecule_${MoleculeClusterName}
 
-yum -y update
-
 yum install java-1.8.0-openjdk -y
 
 #cfn signaling functions

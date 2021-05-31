@@ -50,6 +50,8 @@ done
 exec &> /var/log/bastion.log
 set -x
 
+yum update -y --disablerepo='*' --enablerepo='*microsoft*'
+
 MoleculeSharedDir="/mnt/molecule"
 MoleculeClusterName="molecule1"
 MoleculeLocalPath="/opt/molecule/local/"

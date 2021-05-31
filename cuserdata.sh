@@ -50,6 +50,20 @@ done
 exec &> /var/log/bastion.log
 set -x
 
+MoleculeSharedDir=/mnt/molecule
+MoleculeClusterName=molecule1
+MoleculeLocalPath=/opt/molecule/local/
+MoleculeLocalTemp=/mnt/tmp
+
+
+mkdir -p ${MoleculeLocalPath}
+mkdir -p ${MoleculeSharedDir}
+mkdir -p ${MoleculeLocalTemp}
+mkdir -p ${MoleculeSharedDir}/Molecule_${MoleculeClusterName}
+
+chown centos:centos ${MoleculeLocalPath} ${MoleculeLocalTemp}
+chown centos:centos ${MoleculeSharedDir}/Molecule_${MoleculeClusterName}
+
 yum -y update
 
 yum install java-1.8.0-openjdk -y
@@ -61,7 +75,7 @@ yum install -y nfs-utils
 
 mkdir -p ~/$fileshare
 
-mount -t nfs -o rw,hard,rsize=1048576,wsize=1048576,vers=4.1,tcp $netAppIP:/$fileshare ~/$fileshare -o dir_mode=0755,file_mode=0664
+mount -t nfs -o rw,hard,rsize=1048576,wsize=1048576,vers=4.1,tcp $netAppIP:/$fileshare ~/$MoleculeSharedDir -o dir_mode=0755,file_mode=0664
 
 wget https://platform.boomi.com/atom/molecule_install64.sh
 chmod -R 777 ./molecule_install64.sh
@@ -70,9 +84,9 @@ if [ $boomi_auth == "token" ]
 then
   echo "************token**************"
  ls -l
- ./molecule_install64.sh -q -console -Vusername=$boomi_username -VinstallToken=$boomi_token  -VatomName=azureMolecule -VaccountId=$oomi_account -VlocalPath=/tmp/local -VlocalTempPath=/home/centos/temp -dir ~/$fileshare
+ ./molecule_install64.sh -q -console -Vusername=$boomi_username -VinstallToken=$boomi_token  -VatomName=$MoleculeClusterName -VaccountId=$oomi_account -VlocalPath=$MoleculeLocalPath -VlocalTempPath=$MoleculeLocalTemp -dir ~/$MoleculeSharedDir
  else
  echo "************password**************"
  ls -l
- ./molecule_install64.sh -q -console -Vusername=$boomi_username -Vpassword=$boomi_password  -VatomName=azureMolecule -VaccountId=$boomi_account -VlocalPath=/tmp/local -VlocalTempPath=/home/centos/temp -dir ~/$fileshare
+ ./molecule_install64.sh -q -console -Vusername=$boomi_username -Vpassword=$boomi_password  -VatomName=$MoleculeClusterName -VaccountId=$boomi_account -VlocalPath=$MoleculeLocalPath -VlocalTempPath=$MoleculeLocalTemp -dir ~/$MoleculeSharedDir
  fi

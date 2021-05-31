@@ -74,6 +74,22 @@ echo com.boomi.container.cloudlet.clusterConfig=UNICAST >> ${MoleculeSharedDir}/
 echo com.boomi.deployment.quickstart=True >> ${MoleculeSharedDir}/Molecule_${MoleculeClusterName}/conf/container.properties
 EOF
 
+cat >/tmp/molecule.service <<EOF
+[Unit]
+Description=Dell Boomi Molecule Cluster
+After=network.target
+RequiresMountsFor=/opt/boomi/Molecule_${MoleculeClusterName}
+[Service]
+Type=forking
+User=root
+Restart=always
+ExecStart=/opt/boomi/Molecule_${MoleculeClusterName}/bin/atom start
+ExecStop=/opt/boomi/Molecule_${MoleculeClusterName}/bin/atom stop
+ExecReload=/opt/boomi/Molecule_${MoleculeClusterName}/bin/atom restart
+[Install]
+WantedBy=multi-user.target
+EOF
+
 yum install java-1.8.0-openjdk -y
 
 #cfn signaling functions
@@ -84,6 +100,9 @@ yum install -y nfs-utils
 mkdir -p ~/$fileshare
 
 mount -t nfs -o rw,hard,rsize=1048576,wsize=1048576,vers=4.1,tcp $netAppIP:/$fileshare ~/$MoleculeSharedDir -o dir_mode=0755,file_mode=0664
+
+chmod -R 777 /tmp/molecule_set_cluster_properties.sh
+./tmp/molecule_set_cluster_properties.sh
 
 wget https://platform.boomi.com/atom/molecule_install64.sh
 chmod -R 777 ./molecule_install64.sh
@@ -98,3 +117,6 @@ then
  ls -l
  ./molecule_install64.sh -q -console -Vusername=$boomi_username -Vpassword=$boomi_password  -VatomName=$MoleculeClusterName -VaccountId=$boomi_account -VlocalPath=$MoleculeLocalPath -VlocalTempPath=$MoleculeLocalTemp -dir $MoleculeSharedDir
  fi
+ 
+ mv /tmp/molecule.service /lib/systemd/system/molecule.service
+ systemctl enable molecule

@@ -50,6 +50,10 @@ done
 exec &> /var/log/bastion.log
 set -x
 
+yum -y update
+
+yum install java-1.8.0-openjdk -y
+
 #cfn signaling functions
 yum install git wget -y || apt-get install -y git || zypper -n install git
 

@@ -50,10 +50,10 @@ done
 exec &> /var/log/bastion.log
 set -x
 
-MoleculeSharedDir=/mnt/molecule
-MoleculeClusterName=molecule1
-MoleculeLocalPath=/opt/molecule/local/
-MoleculeLocalTemp=/mnt/tmp
+MoleculeSharedDir="/mnt/molecule"
+MoleculeClusterName="molecule1"
+MoleculeLocalPath="/opt/molecule/local/"
+MoleculeLocalTemp="/mnt/tmp"
 
 
 mkdir -p ${MoleculeLocalPath}

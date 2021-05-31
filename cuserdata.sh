@@ -64,6 +64,16 @@ mkdir -p ${MoleculeSharedDir}/Molecule_${MoleculeClusterName}
 chown centos:centos ${MoleculeLocalPath} ${MoleculeLocalTemp}
 chown centos:centos ${MoleculeSharedDir}/Molecule_${MoleculeClusterName}
 
+LOCAL_IVP4=$(curl -H Metadata:true --noproxy "*" "http://169.254.169.254/metadata/instance/network/interface/0/ipv4/ipAddress/0/privateIpAddress?api-version=2019-06-01&format=text")
+
+cat >/tmp/molecule_set_cluster_properties.sh <<EOF
+#!/bin/bash
+LOCAL_IVP4=$LOCAL_IVP4
+echo com.boomi.container.cloudlet.initialHosts=${!LOCAL_IVP4}[7800] >> ${MoleculeSharedDir}/Molecule_${MoleculeClusterName}/conf/container.properties
+echo com.boomi.container.cloudlet.clusterConfig=UNICAST >> ${MoleculeSharedDir}/Molecule_${MoleculeClusterName}/conf/container.properties
+echo com.boomi.deployment.quickstart=True >> ${MoleculeSharedDir}/Molecule_${MoleculeClusterName}/conf/container.properties
+EOF
+
 yum install java-1.8.0-openjdk -y
 
 #cfn signaling functions

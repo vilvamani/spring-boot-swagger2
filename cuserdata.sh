@@ -104,7 +104,7 @@ yum install -y nfs-utils
 
 mkdir -p ~/$fileshare
 
-mount -t nfs -o rw,hard,rsize=1048576,wsize=1048576,vers=4.1,tcp $netAppIP:/$fileshare ~/$MoleculeSharedDir -o dir_mode=0755,file_mode=0664
+mount -t nfs -o rw,hard,rsize=1048576,wsize=1048576,vers=4.1,tcp $netAppIP:/$fileshare $MoleculeSharedDir -o dir_mode=0755,file_mode=0664
 
 
 /tmp/molecule_set_cluster_properties.sh

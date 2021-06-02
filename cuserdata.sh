@@ -59,12 +59,18 @@ MoleculeLocalTemp="/mnt/tmp"
 
 
 mkdir -p ${MoleculeLocalPath}
+mkdir -p ${MoleculeLocalPath}/data
+mkdir -p ${MoleculeLocalPath}/tmpdata
 mkdir -p ${MoleculeSharedDir}
 mkdir -p ${MoleculeLocalTemp}
 mkdir -p ${MoleculeSharedDir}/Molecule_${MoleculeClusterName}
 
 chown boomi:boomi ${MoleculeLocalPath} ${MoleculeLocalTemp}
+chown boomi:boomi ${MoleculeLocalPath}/data
+chown boomi:boomi ${MoleculeLocalPath}/tmpdata
 chown boomi:boomi ${MoleculeSharedDir}/Molecule_${MoleculeClusterName}
+
+chmod -R 777 ${MoleculeLocalPath}/
 
 
 cat >/tmp/molecule_set_cluster_properties.sh <<EOF

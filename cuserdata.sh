@@ -50,18 +50,25 @@ done
 exec &> /var/log/bastion.log
 set -x
 
-yum update -y --disablerepo='*' --enablerepo='*microsoft*'
-
 MoleculeSharedDir="/mnt/molecule"
 MoleculeClusterName="molecule1"
 MoleculeLocalPath="/opt/molecule/local/"
 MoleculeLocalTemp="/mnt/tmp"
 
+mkdir -p ${MoleculeSharedDir}
+chown boomi:boomi ${MoleculeSharedDir}
+chmod -R 777 ${MoleculeSharedDir}
+
+yum update -y --disablerepo='*' --enablerepo='*microsoft*'
+yum install nfs-utils git wget -y
+yum install java-11-openjdk-devel -y
+
+echo "$netAppIP:/$fileshare $MoleculeSharedDir nfs bg,rw,hard,noatime,nolock,rsize=65536,wsize=65536,vers=4.1,tcp,_netdev 0 0" >> /etc/fstab
+mount -a
 
 mkdir -p ${MoleculeLocalPath}
 mkdir -p ${MoleculeLocalPath}/data
 mkdir -p ${MoleculeLocalPath}/tmpdata
-mkdir -p ${MoleculeSharedDir}
 mkdir -p ${MoleculeLocalTemp}
 mkdir -p ${MoleculeSharedDir}/Molecule_${MoleculeClusterName}
 
@@ -100,14 +107,3 @@ WantedBy=multi-user.target
 EOF
 
 chmod -R 644 /tmp/molecule.service
-
-yum install java-11-openjdk-devel -y
-
-#cfn signaling functions
-yum install git wget -y || apt-get install -y git || zypper -n install git
-
-yum install -y nfs-utils
-
-echo "$netAppIP:/$fileshare $MoleculeSharedDir nfs bg,rw,hard,noatime,nolock,rsize=65536,wsize=65536,vers=4.1,tcp,_netdev 0 0" >> /etc/fstab
-
-

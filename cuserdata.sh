@@ -126,3 +126,5 @@ sh /tmp/molecule_set_cluster_properties.sh
 
 mv /tmp/molecule.service /lib/systemd/system/molecule.service
 systemctl enable molecule
+systemctl restart molecule
+

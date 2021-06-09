@@ -94,16 +94,35 @@ cat >/tmp/molecule.service <<EOF
 [Unit]
 Description=Dell Boomi Molecule Cluster
 After=network.target
-RequiresMountsFor=/opt/boomi/Molecule_${MoleculeClusterName}
+RequiresMountsFor=${MoleculeSharedDir}/Molecule_${MoleculeClusterName}
 [Service]
 Type=forking
 User=root
 Restart=always
-ExecStart=/opt/boomi/Molecule_${MoleculeClusterName}/bin/atom start
-ExecStop=/opt/boomi/Molecule_${MoleculeClusterName}/bin/atom stop
-ExecReload=/opt/boomi/Molecule_${MoleculeClusterName}/bin/atom restart
+ExecStart=${MoleculeSharedDir}/Molecule_${MoleculeClusterName}/bin/atom start
+ExecStop=${MoleculeSharedDir}/Molecule_${MoleculeClusterName}/bin/atom stop
+ExecReload=${MoleculeSharedDir}/Molecule_${MoleculeClusterName}/bin/atom restart
 [Install]
 WantedBy=multi-user.target
 EOF
 
-chmod -R 644 /tmp/molecule.service
+chmod -R 777 /tmp/molecule.service
+
+wget https://platform.boomi.com/atom/molecule_install64.sh -P /tmp
+chmod -R 777 /tmp/molecule_install64.sh
+
+if [ $boomi_auth == "token" ]
+then
+  echo "************token**************"
+ ls -l
+ sudo -u boomi bash -c "/tmp/molecule_install64.sh -q -console -Vusername=$boomi_username -VinstallToken=$boomi_token  -VatomName=$MoleculeClusterName -VaccountId=$oomi_account -VlocalPath=$MoleculeLocalPath -VlocalTempPath=$MoleculeLocalTemp -dir $MoleculeSharedDir"
+else
+ echo "************password**************"
+ ls -l
+ sudo -u boomi bash -c "/tmp/molecule_install64.sh -q -console -Vusername=$boomi_username -Vpassword=$boomi_password  -VatomName=$MoleculeClusterName -VaccountId=$boomi_account -VlocalPath=$MoleculeLocalPath -VlocalTempPath=$MoleculeLocalTemp -dir $MoleculeSharedDir"
+fi
+ 
+sh /tmp/molecule_set_cluster_properties.sh
+
+mv /tmp/molecule.service /lib/systemd/system/molecule.service
+systemctl enable molecule

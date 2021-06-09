@@ -108,4 +108,6 @@ yum install git wget -y || apt-get install -y git || zypper -n install git
 
 yum install -y nfs-utils
 
+echo "$netAppIP:/$fileshare $MoleculeSharedDir nfs bg,rw,hard,noatime,nolock,rsize=65536,wsize=65536,vers=4.1,tcp,_netdev 0 0" >> /etc/fstab
+
 

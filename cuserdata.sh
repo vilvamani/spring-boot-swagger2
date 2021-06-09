@@ -101,7 +101,7 @@ EOF
 
 chmod -R 644 /tmp/molecule.service
 
-yum install java-1.8.0-openjdk -y
+yum install java-11-openjdk-devel -y
 
 #cfn signaling functions
 yum install git wget -y || apt-get install -y git || zypper -n install git

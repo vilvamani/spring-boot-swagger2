@@ -108,23 +108,4 @@ yum install git wget -y || apt-get install -y git || zypper -n install git
 
 yum install -y nfs-utils
 
-mount -t nfs -o rw,hard,rsize=1048576,wsize=1048576,vers=4.1,tcp $netAppIP:/$fileshare $MoleculeSharedDir -o dir_mode=0755,file_mode=0664
 
-wget https://platform.boomi.com/atom/molecule_install64.sh
-chmod -R 777 ./molecule_install64.sh
-
-if [ $boomi_auth == "token" ]
-then
-  echo "************token**************"
- ls -l
- ./molecule_install64.sh -q -console -Vusername=$boomi_username -VinstallToken=$boomi_token  -VatomName=$MoleculeClusterName -VaccountId=$oomi_account -VlocalPath=$MoleculeLocalPath -VlocalTempPath=$MoleculeLocalTemp -dir $MoleculeSharedDir
-else
- echo "************password**************"
- ls -l
- ./molecule_install64.sh -q -console -Vusername=$boomi_username -Vpassword=$boomi_password  -VatomName=$MoleculeClusterName -VaccountId=$boomi_account -VlocalPath=$MoleculeLocalPath -VlocalTempPath=$MoleculeLocalTemp -dir $MoleculeSharedDir
-fi
- 
-sh /tmp/molecule_set_cluster_properties.sh
-
-mv /tmp/molecule.service /lib/systemd/system/molecule.service
-systemctl enable molecule

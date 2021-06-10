@@ -1,8 +1,7 @@
 #cloud-config
-download_and_install_atom:
-  files:
-    /tmp/molecule_install.sh:
-      source: https://platform.boomi.com/atom/molecule_install64.sh
-      mode: '000755'
-      owner: 'root'
-      group: 'root'
+write_files:
+- path:/tmp/molecule_install.sh:
+  source: https://platform.boomi.com/atom/molecule_install64.sh
+  permissions: '0755'
+  owner: 'root'
+  group: 'root'

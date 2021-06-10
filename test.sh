@@ -114,6 +114,8 @@ echo "${local_ip} ${ip_hostname}" >> /etc/hosts
 
 mv /tmp/molecule.service /lib/systemd/system/molecule.service
 systemctl enable molecule
-systemctl restart molecule
+
+${MoleculeSharedDir}/Molecule_${MoleculeClusterName}/bin/atom stop
+sudo -u boomi bash -c '${MoleculeSharedDir}/Molecule_${MoleculeClusterName}/bin/atom start'
 
 sh /tmp/molecule_set_cluster_properties.sh

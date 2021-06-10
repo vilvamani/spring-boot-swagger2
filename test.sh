@@ -108,11 +108,12 @@ EOF
 
 chmod -R 777 /tmp/molecule.service
 
-wget https://platform.boomi.com/atom/molecule_install64.sh -P /tmp
-chmod -R 777 /tmp/molecule_install64.sh
- 
-sh /tmp/molecule_set_cluster_properties.sh
+local_ip=$(ip addr show dev eth0 | egrep -oi 'inet.*brd' | cut -d '/' -f 1 | awk '{print $2}')
+ip_hostname=$(hostname -s)
+echo "${local_ip} ${ip_hostname}" >> /etc/hosts
 
 mv /tmp/molecule.service /lib/systemd/system/molecule.service
 systemctl enable molecule
 systemctl restart molecule
+
+sh /tmp/molecule_set_cluster_properties.sh

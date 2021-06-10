@@ -128,6 +128,7 @@ else
 fi
  
 chown -R boomi:boomi ${MoleculeSharedDir}/Molecule_${MoleculeClusterName}
+chmod -R 777 ${MoleculeSharedDir}/Molecule_${MoleculeClusterName}
 #sh /tmp/molecule_set_cluster_properties.sh
 
 mv /tmp/molecule.service /lib/systemd/system/molecule.service

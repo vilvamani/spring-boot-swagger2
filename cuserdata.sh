@@ -56,7 +56,7 @@ MoleculeLocalPath="/opt/molecule/local/"
 MoleculeLocalTemp="/mnt/tmp"
 
 mkdir -p ${MoleculeSharedDir}
-chown boomi:boomi ${MoleculeSharedDir}
+chown -R boomi:boomi ${MoleculeSharedDir}
 chmod -R 777 ${MoleculeSharedDir}
 
 yum update -y --disablerepo='*' --enablerepo='*microsoft*'
@@ -72,10 +72,10 @@ mkdir -p ${MoleculeLocalPath}/tmpdata
 mkdir -p ${MoleculeLocalTemp}
 mkdir -p ${MoleculeSharedDir}/Molecule_${MoleculeClusterName}
 
-chown boomi:boomi ${MoleculeLocalPath} ${MoleculeLocalTemp}
-chown boomi:boomi ${MoleculeLocalPath}/data
-chown boomi:boomi ${MoleculeLocalPath}/tmpdata
-chown boomi:boomi ${MoleculeSharedDir}/Molecule_${MoleculeClusterName}
+chown -R boomi:boomi ${MoleculeLocalPath} ${MoleculeLocalTemp}
+chown -R boomi:boomi ${MoleculeLocalPath}/data
+chown -R boomi:boomi ${MoleculeLocalPath}/tmpdata
+chown -R boomi:boomi ${MoleculeSharedDir}/Molecule_${MoleculeClusterName}
 
 chmod -R 777 ${MoleculeLocalPath}/
 
@@ -127,12 +127,13 @@ else
  sh /tmp/molecule_install64.sh -q -console -Vusername=$boomi_username -Vpassword=$boomi_password  -VatomName=$MoleculeClusterName -VaccountId=$boomi_account -VlocalPath=$MoleculeLocalPath -VlocalTempPath=$MoleculeLocalTemp -dir $MoleculeSharedDir
 fi
  
+chown -R boomi:boomi ${MoleculeSharedDir}/Molecule_${MoleculeClusterName}
 #sh /tmp/molecule_set_cluster_properties.sh
 
 mv /tmp/molecule.service /lib/systemd/system/molecule.service
 systemctl enable molecule
 
 ${MoleculeSharedDir}/Molecule_${MoleculeClusterName}/bin/atom stop
-sudo -u boomi bash -c '${MoleculeSharedDir}/Molecule_${MoleculeClusterName}/bin/atom start'
+sudo -u boomi bash -c "$MoleculeSharedDir/Molecule_$MoleculeClusterName/bin/atom start"
 
 

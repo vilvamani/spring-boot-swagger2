@@ -111,6 +111,11 @@ chmod -R 777 /tmp/molecule.service
 wget https://platform.boomi.com/atom/molecule_install64.sh -P /tmp
 chmod -R 777 /tmp/molecule_install64.sh
 
+
+local_ip=$(ip addr show dev eth0 | egrep -oi 'inet.*brd' | cut -d '/' -f 1 | awk '{print $2}')
+ip_hostname=$(hostname -s)
+echo "${local_ip} ${ip_hostname}" >> /etc/hosts
+
 if [ $boomi_auth == "token" ]
 then
   echo "************token**************"
@@ -122,7 +127,7 @@ else
  sh /tmp/molecule_install64.sh -q -console -Vusername=$boomi_username -Vpassword=$boomi_password  -VatomName=$MoleculeClusterName -VaccountId=$boomi_account -VlocalPath=$MoleculeLocalPath -VlocalTempPath=$MoleculeLocalTemp -dir $MoleculeSharedDir
 fi
  
-sh /tmp/molecule_set_cluster_properties.sh
+#sh /tmp/molecule_set_cluster_properties.sh
 
 mv /tmp/molecule.service /lib/systemd/system/molecule.service
 systemctl enable molecule

@@ -56,7 +56,7 @@ MoleculeLocalPath="/opt/molecule/local/"
 MoleculeLocalTemp="/mnt/tmp"
 
 mkdir -p ${MoleculeSharedDir}
-chown boomi:boomi ${MoleculeSharedDir}
+chown -R boomi:boomi ${MoleculeSharedDir}
 chmod -R 777 ${MoleculeSharedDir}
 
 yum update -y --disablerepo='*' --enablerepo='*microsoft*'
@@ -65,19 +65,6 @@ yum install java-11-openjdk-devel -y
 
 echo "$netAppIP:/$fileshare $MoleculeSharedDir nfs bg,rw,hard,noatime,nolock,rsize=65536,wsize=65536,vers=4.1,tcp,_netdev 0 0" >> /etc/fstab
 mount -a
-
-mkdir -p ${MoleculeLocalPath}
-mkdir -p ${MoleculeLocalPath}/data
-mkdir -p ${MoleculeLocalPath}/tmpdata
-mkdir -p ${MoleculeLocalTemp}
-mkdir -p ${MoleculeSharedDir}/Molecule_${MoleculeClusterName}
-
-chown boomi:boomi ${MoleculeLocalPath} ${MoleculeLocalTemp}
-chown boomi:boomi ${MoleculeLocalPath}/data
-chown boomi:boomi ${MoleculeLocalPath}/tmpdata
-chown boomi:boomi ${MoleculeSharedDir}/Molecule_${MoleculeClusterName}
-
-chmod -R 777 ${MoleculeLocalPath}/
 
 
 cat >/tmp/molecule_set_cluster_properties.sh <<EOF

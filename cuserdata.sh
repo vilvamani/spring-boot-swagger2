@@ -135,6 +135,6 @@ mv /tmp/molecule.service /lib/systemd/system/molecule.service
 systemctl enable molecule
 
 ${MoleculeSharedDir}/Molecule_${MoleculeClusterName}/bin/atom stop
-sudo -u boomi bash -c "$MoleculeSharedDir/Molecule_$MoleculeClusterName/bin/atom start"
+${MoleculeSharedDir}/Molecule_${MoleculeClusterName}/bin/atom start
 
 

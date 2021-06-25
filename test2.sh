@@ -114,17 +114,6 @@ chmod -R 777 /tmp/molecule_install64.sh
 local_ip=$(ip addr show dev eth0 | egrep -oi 'inet.*brd' | cut -d '/' -f 1 | awk '{print $2}')
 ip_hostname=$(hostname -s)
 echo "${local_ip} ${ip_hostname}" >> /etc/hosts
-
-if [ $boomi_auth == "token" ]
-then
-  echo "************token**************"
- ls -l
- sh /tmp/molecule_install64.sh -q -console -Vusername=$boomi_username -VinstallToken=$boomi_token  -VatomName=$MoleculeClusterName -VaccountId=$oomi_account -VlocalPath=$MoleculeLocalPath -VlocalTempPath=$MoleculeLocalTemp -dir $MoleculeSharedDir
-else
- echo "************password**************"
- ls -l
- sh /tmp/molecule_install64.sh -q -console -Vusername=$boomi_username -Vpassword=$boomi_password  -VatomName=$MoleculeClusterName -VaccountId=$boomi_account -VlocalPath=$MoleculeLocalPath -VlocalTempPath=$MoleculeLocalTemp -dir $MoleculeSharedDir
-fi
  
 chown -R boomi:boomi ${MoleculeSharedDir}/Molecule_${MoleculeClusterName}
 chmod -R 777 ${MoleculeSharedDir}/Molecule_${MoleculeClusterName}

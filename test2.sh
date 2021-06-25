@@ -63,7 +63,7 @@ apt install nfs-common git wget -y
 apt install default-jre -y
 apt install net-tools
 
-echo "$netAppIP:/$fileshare $MoleculeSharedDir nfs bg,rw,hard,noatime,nolock,rsize=65536,wsize=65536,vers=4.1,tcp,_netdev 0 0" >> /etc/fstab
+echo "$netAppIP:/$fileshare $MoleculeSharedDir nfs auto,nofail,noatime,nolock,intr,tcp,actimeo=1800 0 0" >> /etc/fstab
 mount -a
 
 mkdir -p ${MoleculeLocalPath}

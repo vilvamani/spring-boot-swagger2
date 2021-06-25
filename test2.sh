@@ -56,7 +56,7 @@ MoleculeLocalPath="/opt/molecule/local/"
 MoleculeLocalTemp="/mnt/tmp"
 
 mkdir -p ${MoleculeSharedDir}
-chown -R boomi:boomi ${MoleculeSharedDir}
+chown -R nobody:nogroup ${MoleculeSharedDir}
 chmod -R 777 ${MoleculeSharedDir}
 
 apt install nfs-common git wget -y
@@ -75,7 +75,6 @@ mkdir -p ${MoleculeSharedDir}/Molecule_${MoleculeClusterName}
 chown -R boomi:boomi ${MoleculeLocalPath} ${MoleculeLocalTemp}
 chown -R boomi:boomi ${MoleculeLocalPath}/data
 chown -R boomi:boomi ${MoleculeLocalPath}/tmpdata
-chown -R boomi:boomi ${MoleculeSharedDir}/Molecule_${MoleculeClusterName}
 
 chmod -R 777 ${MoleculeLocalPath}/
 

@@ -196,7 +196,7 @@ kubectl apply -f https://raw.githubusercontent.com/vilvamani/quickstart-aks-boom
 
 sleep 300
 
-kubectl apply -f https://raw.githubusercontent.com/vilvamani/quickstart-aks-boomi-molecule/main/kubernetes/ingress.yaml --namespace=aks-boomi-molecule --kubeconfig=/root/.kube/config
+kubectl apply -f https://raw.githubusercontent.com/vilvamani/spring-boot-swagger2/master/aksingress.yaml --namespace=aks-boomi-molecule --kubeconfig=/root/.kube/config
 
 rm /tmp/secrets.yaml
 rm /tmp/persistentvolume.yaml

@@ -125,4 +125,4 @@ systemctl enable molecule
 ${MoleculeSharedDir}/Molecule_${MoleculeClusterName}/bin/atom stop
 ${MoleculeSharedDir}/Molecule_${MoleculeClusterName}/bin/atom start
 
-sh /tmp/molecule_set_cluster_properties.sh
+#sh /tmp/molecule_set_cluster_properties.sh

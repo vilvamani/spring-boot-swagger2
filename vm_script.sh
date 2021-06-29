@@ -109,6 +109,7 @@ ip_hostname=$(hostname -s)
 echo "${local_ip} ${ip_hostname}" >> /etc/hosts
 
 if [ $node_type == "head" ]
+then
   if [ $boomi_auth == "token" ]
   then
     echo "************token**************"
@@ -124,11 +125,11 @@ fi
 chown -R boomi:boomi ${MoleculeSharedDir}/Molecule_${MoleculeClusterName}
 chmod -R 777 ${MoleculeSharedDir}/Molecule_${MoleculeClusterName}
 
-if [ $node_type == "worker" ]
+if [ $node_type == "worker" ] then
   sleep 200
 fi
 
-if [ $node_type == "tail" ]
+if [ $node_type == "tail" ] then
   sleep 300
 fi
 
@@ -138,6 +139,6 @@ systemctl enable molecule
 ${MoleculeSharedDir}/Molecule_${MoleculeClusterName}/bin/atom stop
 ${MoleculeSharedDir}/Molecule_${MoleculeClusterName}/bin/atom start
 
-if [ $node_type == "tail" ]
+if [ $node_type == "tail" ] then
   sh /tmp/molecule_set_cluster_properties.sh
 fi

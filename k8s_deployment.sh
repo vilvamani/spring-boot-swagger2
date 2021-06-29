@@ -183,7 +183,7 @@ fi
 
 kubectl apply -f https://raw.githubusercontent.com/vilvamani/quickstart-aks-boomi-molecule/main/kubernetes/services.yaml --namespace=aks-boomi-molecule --kubeconfig=/root/.kube/config
 
-kubectl apply -f https://raw.githubusercontent.com/vilvamani/quickstart-aks-boomi-molecule/main/kubernetes/hpa.yaml --namespace=aks-boomi-molecule --kubeconfig=/root/.kube/config
+kubectl apply -f https://raw.githubusercontent.com/vilvamani/spring-boot-swagger2/master/hpa.yaml --namespace=aks-boomi-molecule --kubeconfig=/root/.kube/config
 
 #helm repo add kedacore https://kedacore.github.io/charts
 #helm repo update
@@ -197,10 +197,6 @@ kubectl apply -f https://raw.githubusercontent.com/vilvamani/quickstart-aks-boom
 sleep 300
 
 kubectl apply -f https://raw.githubusercontent.com/vilvamani/quickstart-aks-boomi-molecule/main/kubernetes/ingress.yaml --namespace=aks-boomi-molecule --kubeconfig=/root/.kube/config
-
-rm /tmp/secrets.yaml
-rm /tmp/persistentvolume.yaml
-rm /tmp/persistentvolumeclam.yaml
 
 sleep 300
 

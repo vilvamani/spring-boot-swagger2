@@ -141,18 +141,17 @@ systemctl enable molecule
 ${MoleculeSharedDir}/Molecule_${MoleculeClusterName}/bin/atom stop
 ${MoleculeSharedDir}/Molecule_${MoleculeClusterName}/bin/atom start
 
+cat >/tmp/molecule_set_cluster_properties.sh <<EOF
+#!/bin/bash
+LOCAL_IVP4=$(curl -H Metadata:true --noproxy "*" "http://169.254.169.254/metadata/instance/network/interface/0/ipv4/ipAddress/0/privateIpAddress?api-version=2019-06-01&format=text")
+echo com.boomi.container.cloudlet.initialHosts=[7800] >> ${MoleculeSharedDir}/Molecule_${MoleculeClusterName}/conf/container.properties
+echo com.boomi.container.cloudlet.clusterConfig=UNICAST >> ${MoleculeSharedDir}/Molecule_${MoleculeClusterName}/conf/container.properties
+echo com.boomi.deployment.quickstart=True >> ${MoleculeSharedDir}/Molecule_${MoleculeClusterName}/conf/container.properties
+EOF
+
+chmod -R 777 /tmp/molecule_set_cluster_properties.sh
+
 if [ $node_type == "tail" ]
 then
-
-  cat >/tmp/molecule_set_cluster_properties.sh <<EOF
-  #!/bin/bash
-  LOCAL_IVP4=$(curl -H Metadata:true --noproxy "*" "http://169.254.169.254/metadata/instance/network/interface/0/ipv4/ipAddress/0/privateIpAddress?api-version=2019-06-01&format=text")
-  echo com.boomi.container.cloudlet.initialHosts=[7800] >> ${MoleculeSharedDir}/Molecule_${MoleculeClusterName}/conf/container.properties
-  echo com.boomi.container.cloudlet.clusterConfig=UNICAST >> ${MoleculeSharedDir}/Molecule_${MoleculeClusterName}/conf/container.properties
-  echo com.boomi.deployment.quickstart=True >> ${MoleculeSharedDir}/Molecule_${MoleculeClusterName}/conf/container.properties
-  EOF
-  
-  chmod -R 777 /tmp/molecule_set_cluster_properties.sh
-
   sh /tmp/molecule_set_cluster_properties.sh
 fi

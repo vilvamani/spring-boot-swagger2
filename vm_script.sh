@@ -108,6 +108,15 @@ local_ip=$(ip addr show dev eth0 | egrep -oi 'inet.*brd' | cut -d '/' -f 1 | awk
 ip_hostname=$(hostname -s)
 echo "${local_ip} ${ip_hostname}" >> /etc/hosts
 
+cat >/tmp/molecule_set_cluster_properties.sh <<EOF
+#!/bin/bash
+LOCAL_IVP4=$(curl -H Metadata:true --noproxy "*" "http://169.254.169.254/metadata/instance/network/interface/0/ipv4/ipAddress/0/privateIpAddress?api-version=2019-06-01&format=text")
+echo com.boomi.container.cloudlet.initialHosts=[7800] >> ${MoleculeSharedDir}/Molecule_${MoleculeClusterName}/conf/container.properties
+echo com.boomi.container.cloudlet.clusterConfig=UNICAST >> ${MoleculeSharedDir}/Molecule_${MoleculeClusterName}/conf/container.properties
+echo com.boomi.deployment.quickstart=True >> ${MoleculeSharedDir}/Molecule_${MoleculeClusterName}/conf/container.properties
+EOF
+chmod -R 777 /tmp/molecule_set_cluster_properties.sh
+
 if [ $node_type == "head" ]
 then
   if [ $boomi_auth == "token" ]
@@ -125,33 +134,21 @@ fi
 chown -R boomi:boomi ${MoleculeSharedDir}/Molecule_${MoleculeClusterName}
 chmod -R 777 ${MoleculeSharedDir}/Molecule_${MoleculeClusterName}
 
-if [ $node_type == "worker" ]
-then
-  sleep 200
-fi
-
-if [ $node_type == "tail" ]
-then
-  sleep 300
-fi
-
 mv /tmp/molecule.service /lib/systemd/system/molecule.service
 systemctl enable molecule
 
 ${MoleculeSharedDir}/Molecule_${MoleculeClusterName}/bin/atom stop
-${MoleculeSharedDir}/Molecule_${MoleculeClusterName}/bin/atom start
 
-cat >/tmp/molecule_set_cluster_properties.sh <<EOF
-#!/bin/bash
-LOCAL_IVP4=$(curl -H Metadata:true --noproxy "*" "http://169.254.169.254/metadata/instance/network/interface/0/ipv4/ipAddress/0/privateIpAddress?api-version=2019-06-01&format=text")
-echo com.boomi.container.cloudlet.initialHosts=[7800] >> ${MoleculeSharedDir}/Molecule_${MoleculeClusterName}/conf/container.properties
-echo com.boomi.container.cloudlet.clusterConfig=UNICAST >> ${MoleculeSharedDir}/Molecule_${MoleculeClusterName}/conf/container.properties
-echo com.boomi.deployment.quickstart=True >> ${MoleculeSharedDir}/Molecule_${MoleculeClusterName}/conf/container.properties
-EOF
-
-chmod -R 777 /tmp/molecule_set_cluster_properties.sh
-
-if [ $node_type == "tail" ]
+if [ $node_type == "head" ]
 then
+  ${MoleculeSharedDir}/Molecule_${MoleculeClusterName}/bin/atom start
+elif [ $node_type == "worker" ]
+then
+  sleep 200
+  ${MoleculeSharedDir}/Molecule_${MoleculeClusterName}/bin/atom start
+elif [ $node_type == "tail" ]
+then
+  sleep 300
+  ${MoleculeSharedDir}/Molecule_${MoleculeClusterName}/bin/atom start
   sh /tmp/molecule_set_cluster_properties.sh
 fi

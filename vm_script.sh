@@ -152,3 +152,7 @@ then
   ${MoleculeSharedDir}/Molecule_${MoleculeClusterName}/bin/atom start
   sh /tmp/molecule_set_cluster_properties.sh
 fi
+
+sleep 60
+
+/mnt/molecule/Molecule_molecule1/bin/atom status

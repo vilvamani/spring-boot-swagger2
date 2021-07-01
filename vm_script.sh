@@ -54,10 +54,10 @@ done
 exec &> /var/log/bastion.log
 set -x
 
-MoleculeSharedDir="/mnt/molecule"
+MoleculeSharedDir="/home/boomi/molecule"
 MoleculeClusterName="molecule1"
 MoleculeLocalPath="/opt/molecule/local/"
-MoleculeLocalTemp="/mnt/tmp"
+MoleculeLocalTemp="/home/boomi/tmp"
 
 mkdir -p ${MoleculeSharedDir}
 chown -R nobody:nogroup ${MoleculeSharedDir}
@@ -155,4 +155,4 @@ fi
 
 sleep 60
 
-/mnt/molecule/Molecule_molecule1/bin/atom status
+${MoleculeSharedDir}/Molecule_${MoleculeClusterName}/bin/atom status

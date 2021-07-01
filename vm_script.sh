@@ -123,11 +123,11 @@ then
   then
     echo "************token**************"
   ls -l
-  sh /tmp/molecule_install64.sh -q -console -Vusername=$boomi_username -VinstallToken=$boomi_token  -VatomName=$MoleculeClusterName -VaccountId=$oomi_account -VlocalPath=$MoleculeLocalPath -VlocalTempPath=$MoleculeLocalTemp -dir $MoleculeSharedDir
+  sudo -u boomi bash -c "/tmp/molecule_install64.sh -q -console -Vusername=$boomi_username -VinstallToken=$boomi_token  -VatomName=$MoleculeClusterName -VaccountId=$oomi_account -VlocalPath=$MoleculeLocalPath -VlocalTempPath=$MoleculeLocalTemp -dir $MoleculeSharedDir"
   else
   echo "************password**************"
   ls -l
-  sh /tmp/molecule_install64.sh -q -console -Vusername=$boomi_username -Vpassword=$boomi_password  -VatomName=$MoleculeClusterName -VaccountId=$boomi_account -VlocalPath=$MoleculeLocalPath -VlocalTempPath=$MoleculeLocalTemp -dir $MoleculeSharedDir
+  sudo -u boomi bash -c "/tmp/molecule_install64.sh -q -console -Vusername=$boomi_username -Vpassword=$boomi_password  -VatomName=$MoleculeClusterName -VaccountId=$boomi_account -VlocalPath=$MoleculeLocalPath -VlocalTempPath=$MoleculeLocalTemp -dir $MoleculeSharedDir"
   fi
 fi
  
@@ -141,15 +141,15 @@ ${MoleculeSharedDir}/Molecule_${MoleculeClusterName}/bin/atom stop
 
 if [ $node_type == "head" ]
 then
-  sudo -u boomi bash -c '${MoleculeSharedDir}/Molecule_${MoleculeClusterName}/bin/atom start'
+  sudo -u boomi bash -c "${MoleculeSharedDir}/Molecule_${MoleculeClusterName}/bin/atom start"
 elif [ $node_type == "worker" ]
 then
   sleep 200
-  sudo -u boomi bash -c '${MoleculeSharedDir}/Molecule_${MoleculeClusterName}/bin/atom start'
+  sudo -u boomi bash -c "${MoleculeSharedDir}/Molecule_${MoleculeClusterName}/bin/atom start"
 elif [ $node_type == "tail" ]
 then
   sleep 300
-  sudo -u boomi bash -c '${MoleculeSharedDir}/Molecule_${MoleculeClusterName}/bin/atom start'
+  sudo -u boomi bash -c "${MoleculeSharedDir}/Molecule_${MoleculeClusterName}/bin/atom start"
   sh /tmp/molecule_set_cluster_properties.sh
 fi
 

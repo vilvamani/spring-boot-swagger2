@@ -60,7 +60,7 @@ MoleculeLocalPath="/opt/molecule/local/"
 MoleculeLocalTemp="/home/boomi/tmp"
 
 mkdir -p ${MoleculeSharedDir}
-chown -R nobody:nogroup ${MoleculeSharedDir}
+chown -R boomi:boomi ${MoleculeSharedDir}
 chmod -R 777 ${MoleculeSharedDir}
 
 apt install nfs-common git wget -y

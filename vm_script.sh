@@ -60,8 +60,6 @@ MoleculeLocalPath="/opt/molecule/local/"
 MoleculeLocalTemp="/home/boomi/tmp"
 
 mkdir -p ${MoleculeSharedDir}
-chown -R boomi:boomi ${MoleculeSharedDir}
-chmod -R 777 ${MoleculeSharedDir}
 
 apt install nfs-common git wget -y
 apt install default-jre -y
@@ -76,11 +74,13 @@ mkdir -p ${MoleculeLocalPath}/tmpdata
 mkdir -p ${MoleculeLocalTemp}
 mkdir -p ${MoleculeSharedDir}/Molecule_${MoleculeClusterName}
 
+chown -R boomi:boomi ${MoleculeSharedDir}
 chown -R boomi:boomi ${MoleculeLocalPath} ${MoleculeLocalTemp}
 chown -R boomi:boomi ${MoleculeLocalPath}/data
 chown -R boomi:boomi ${MoleculeLocalPath}/tmpdata
 
 chmod -R 777 ${MoleculeLocalPath}/
+chmod -R 777 ${MoleculeSharedDir}
 
 cat >/tmp/molecule.service <<EOF
 [Unit]

@@ -174,6 +174,12 @@ kubectl apply -f /tmp/persistentvolume.yaml --namespace=aks-boomi-molecule --kub
 
 kubectl apply -f /tmp/persistentvolumeclam.yaml --namespace=aks-boomi-molecule --kubeconfig=/root/.kube/config
 
+if [ $boomi_auth == "token" ]
+then
+kubectl apply -f https://raw.githubusercontent.com/vilvamani/quickstart-aks-boomi-molecule/main/kubernetes/statefulset_token.yaml --namespace=aks-boomi-molecule --kubeconfig=/root/.kube/config
+else
+kubectl apply -f https://raw.githubusercontent.com/vilvamani/quickstart-aks-boomi-molecule/main/kubernetes/statefulset_password.yaml --namespace=aks-boomi-molecule --kubeconfig=/root/.kube/config
+fi
 
 kubectl apply -f https://raw.githubusercontent.com/vilvamani/quickstart-aks-boomi-molecule/main/kubernetes/services.yaml --namespace=aks-boomi-molecule --kubeconfig=/root/.kube/config
 

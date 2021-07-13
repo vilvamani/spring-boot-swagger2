@@ -147,11 +147,11 @@ then
 elif [ $node_type == "worker" ]
 then
   sleep 200
-  sudo -u boomi bash -c "${MoleculeSharedDir}/Molecule_${MoleculeClusterName}/bin/atom start"
+  sudo -u boomi bash -c "${MoleculeSharedDir}/Molecule_${MoleculeClusterName}/bin/atom restart"
 elif [ $node_type == "tail" ]
 then
   sleep 300
-  sudo -u boomi bash -c "${MoleculeSharedDir}/Molecule_${MoleculeClusterName}/bin/atom start"
+  sudo -u boomi bash -c "${MoleculeSharedDir}/Molecule_${MoleculeClusterName}/bin/atom restart"
   sh /tmp/molecule_set_cluster_properties.sh
 fi
 

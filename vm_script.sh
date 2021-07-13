@@ -138,10 +138,11 @@ chmod -R 777 ${MoleculeSharedDir}/Molecule_${MoleculeClusterName}
 mv /tmp/molecule.service /lib/systemd/system/molecule.service
 systemctl enable molecule
 
-${MoleculeSharedDir}/Molecule_${MoleculeClusterName}/bin/atom stop
+
 
 if [ $node_type == "head" ]
 then
+  ${MoleculeSharedDir}/Molecule_${MoleculeClusterName}/bin/atom stop
   sudo -u boomi bash -c "${MoleculeSharedDir}/Molecule_${MoleculeClusterName}/bin/atom start"
 elif [ $node_type == "worker" ]
 then

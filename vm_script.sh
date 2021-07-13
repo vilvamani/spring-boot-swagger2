@@ -61,7 +61,8 @@ MoleculeLocalTemp="/home/boomi/tmp"
 
 mkdir -p ${MoleculeSharedDir}
 
-apt install nfs-common git wget -y
+apt-get install nfs-common -y 
+apt git wget -y
 apt install default-jre -y
 apt install net-tools
 

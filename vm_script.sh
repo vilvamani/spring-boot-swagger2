@@ -56,7 +56,7 @@ set -x
 
 MoleculeSharedDir="/home/boomi/molecule"
 MoleculeClusterName="molecule1"
-MoleculeLocalPath="/opt/molecule/local/"
+MoleculeLocalPath="/opt/molecule/local"
 MoleculeLocalTemp="/home/boomi/tmp"
 
 mkdir -p ${MoleculeSharedDir}
